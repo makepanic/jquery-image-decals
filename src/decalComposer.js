@@ -34,8 +34,7 @@ DecalComposer = function ($target, opts) {
 };
 DecalComposer.prototype = {
     toJSON: function () {
-        var obj = this.img.toObject();
-        obj.decals = this.decalHolder.toObject();
+        var obj = this.decalHolder.toObject();
 
         return JSON.stringify(obj);
     },

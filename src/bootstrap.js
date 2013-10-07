@@ -1,9 +1,9 @@
-require('./vendor/polyfill');
+//require('./vendor/polyfill');
 
 var _lastId = 0,
     uid = function () {
         _lastId += 1;
-        return 'image-composer-uid-' + this._lastId;
+        return 'image-composer-uid-' + _lastId;
     };
 
 require('./decalComposer.js');

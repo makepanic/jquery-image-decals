@@ -49,14 +49,14 @@
 </head>
 <body>
 
-<h2>jquery-decal-composer (click decal to show "options")</h2>
+<h2>original (600x600):</h2>
+<img class="first" alt="foobar" src="http://i.imgur.com/As8m7lx.png">
 
-<img alt="foobar" src="http://placehold.it/400/400">
+<h2>400x400 - scaleDecalDimension: true</h2>
+<img class="second" alt="foobar" src="http://placehold.it/400/400">
 
-
-<h4>JSON.stringify:</h4>
-<textarea name="tostring" id="tostring" cols="50" rows="10"></textarea>
-<button onclick="$('#tostring').val(composer.toJSON())">composer.toJSON()</button>
+<h2>400x400 - scaleDecalDimension: false</h2>
+<img class="third" alt="foobar" src="http://placehold.it/400/400">
 
 <script type="text/javascript">
     // TODO: this code to initializer in plugin-wrapper.js
@@ -80,19 +80,45 @@
             top: 0
         }
     };
-    var data = [{
-        "key":"foobar",
-        "width":100,
-        "height":100,
-        "left":213,
-        "top":145
-    }];
+    var data = [{"key":"foobar-small","width":50,"height":50,"left":238,"top":392},{"key":"foobar","width":100,"height":100,"left":237,"top":217},{"key":"foobar-small","width":50,"height":50,"left":288,"top":392},{"key":"foobar-small","width":50,"height":50,"left":173,"top":217},{"key":"foobar-small","width":50,"height":50,"left":351,"top":217},{"key":"foobar-small","width":50,"height":50,"left":173,"top":267},{"key":"foobar-small","width":50,"height":50,"left":351,"top":267}];
 
-    var composer = new DecalComposer($('img'), {
+    var composer = new DecalComposer($('.first'), {
+        scaleDecalDimension: true,
+        domain: {
+            width: 600,
+            height: 600
+        },
+        decals: decals,
+        data: data,
+        events: {
+            onDecalClicked: function (event, decal) {
+                console.log('decal clicked', event, decal)
+
+            }
+        }
+    });
+
+    var composer2 = new DecalComposer($('.second'), {
+        scaleDecalDimension: true,
+        domain: {
+            width: 600,
+            height: 600
+        },
+        decals: decals,
+        data: data,
+        events: {
+            onDecalClicked: function (event, decal) {
+                console.log('decal clicked', event, decal)
+
+            }
+        }
+    });
+
+    var composer3 = new DecalComposer($('.third'), {
         scaleDecalDimension: false,
         domain: {
-            width: 400,
-            height: 400
+            width: 600,
+            height: 600
         },
         decals: decals,
         data: data,

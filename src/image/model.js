@@ -10,5 +10,3 @@ Img = function ($el) {
 };
 
 require('./dimension');
-require('./persistence/fromObject');
-require('./persistence/toObject');
