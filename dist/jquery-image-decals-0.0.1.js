@@ -21,10 +21,6 @@ var _lastId = 0,
 
 var DecalComposer = function ($target, opts) {
 
-    console.log('constructor');
-
-    // bootstrap layout elements
-
     var that = this,
         noop = function () {},
         defaults = {
@@ -62,8 +58,6 @@ DecalComposer.prototype = {
         return JSON.stringify(obj);
     },
     init: function () {
-        console.log('init');
-
         var that = this,
             decalObj,
             elImgDecals = $('<div class="image-composer-decals"></div>'),
@@ -71,9 +65,6 @@ DecalComposer.prototype = {
 
         this.scale.width = this.img.width / this.cfg.domain.width;
         this.scale.height = this.img.height / this.cfg.domain.height;
-
-        console.log('scale', this.scale, 'domain', this.cfg.domain);
-        console.log('img', this.img.width, this.img.height);
 
         this.renderer = new DecalCanvasRenderer(this.$target, this.img);
 
@@ -110,8 +101,6 @@ DecalComposer.prototype = {
 
             that.decalHolder.addDecal(new Decal(decalObj), true);
         });
-
-        console.log('rendering everything');
 
         this.decalHolder.render();
         this.decalPalette.render();
@@ -199,7 +188,6 @@ var DecalHolder = function ($target, cfg) {
     this.$target.css('height', cfg.dimension.height + 'px');
 
     this.$target.on('click', 'span', function (e) {
-        console.log('span clicked', e);
         if (e.target && e.target.getAttribute('data-uid')) {
             var decalId = e.target.getAttribute('data-uid'),
                 decal = that.itemsMap.hasOwnProperty(decalId) ? that.itemsMap[decalId] : undefined;
@@ -263,8 +251,6 @@ DecalHolder.prototype = {
         var span = document.createElement('span'),
             intFn = Math.floor;
 
-        console.log('createElement from', item);
-
         span.className = item.key + ' draggable';
         span.title = item.title;
         span.setAttribute('data-uid', item.uid);
@@ -305,8 +291,6 @@ DecalHolder.prototype = {
     removeDecal: function (decal) {
         var removeIndex = -1,
             found = false;
-
-        console.log('removing', decal);
 
         this.items.every(function (item, index) {
             if (item.uid === decal.uid) {
