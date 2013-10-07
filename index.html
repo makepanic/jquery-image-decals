@@ -86,9 +86,16 @@
         "top":145
     }];
 
-    var composer = new IMGCOMP.DecalComposer($('img'), {
+    var composer = new DecalComposer($('img'), {
+
         decals: decals,
-        data: data
+        data: data,
+        events: {
+            onDecalClicked: function (event, decal) {
+                console.log('decal clicked', event, decal)
+
+            }
+        }
     });
 
 </script>

@@ -1,16 +1,10 @@
 require('./vendor/polyfill');
 
-window.IMGCOMP = {
-    _lastId: 0,
-    /**
-     *
-     * @returns {string}
-     */
-    uid: function () {
-        this._lastId += 1;
+var _lastId = 0,
+    uid = function () {
+        _lastId += 1;
         return 'image-composer-uid-' + this._lastId;
-    }
-};
+    };
 
 require('./decalComposer.js');
 require('./image/model.js');

@@ -1,23 +1,28 @@
-IMGCOMP.DecalComposer = function ($target, opts) {
+DecalComposer = function ($target, opts) {
 
     // bootstrap layout elements
 
     var that = this,
+        noop = function () {},
         defaults = {
             decals: [],
-            data: []
+            data: [],
+            events: {
+                onDecalClicked: noop
+            }
         };
 
-    this.img = new IMGCOMP.Img($target.attr('src'));
+    this.img = new Img($target.attr('src'));
 
-    this.$target = $target;
     this.cfg = $.extend({}, defaults, opts);
-
     this.img.dimension(function () {
         that.init();
     });
+
+    this.events = this.cfg.events;
+    this.$target = $target;
 };
-IMGCOMP.DecalComposer.prototype = {
+DecalComposer.prototype = {
     toJSON: function () {
         var obj = this.img.toObject();
         obj.decals = this.decalHolder.toObject();
@@ -31,23 +36,23 @@ IMGCOMP.DecalComposer.prototype = {
             elImgDecals = $('<div class="image-composer-decals"></div>'),
             elPalette = $('<div class="image-composer-palette"></div>');
 
-        this.renderer = new IMGCOMP.DecalCanvasRenderer(this.$target, this.img);
+        this.renderer = new DecalCanvasRenderer(this.$target, this.img);
 
         // create decalHolder container
         this.renderer.$target.parent().find('.image-composer-canvas').append(elImgDecals);
 
-        this.decalHolder = new IMGCOMP.DecalHolder(elImgDecals, {
+        this.decalHolder = new DecalHolder(elImgDecals, {
             items: []
         });
         this.decalHolder.$target.on('decal-item-clicked', function (e, data) {
-            alert('decal item clicked');
+            that.events.onDecalClicked.call(e.target, e, data.decal);
         });
 
         // create palette container
         this.renderer.$target.parent().append(elPalette);
-        this.decalPalette = new IMGCOMP.DecalPalette(elPalette, this.cfg.decals);
+        this.decalPalette = new DecalPalette(elPalette, this.cfg.decals);
         this.decalPalette.$target.on('decal-palette-item-clicked', function (e, data) {
-            that.decalHolder.addDecal(new IMGCOMP.Decal(that.cfg.decals[data.decal.key]));
+            that.decalHolder.addDecal(new Decal(that.cfg.decals[data.decal.key]));
         });
 
         this.cfg.data.forEach(function (item) {
@@ -57,8 +62,7 @@ IMGCOMP.DecalComposer.prototype = {
             decalObj.left = item.left;
             decalObj.top = item.top;
 
-            console.log('adding decal', decalObj);
-            that.decalHolder.addDecal(new IMGCOMP.Decal(decalObj), true);
+            that.decalHolder.addDecal(new Decal(decalObj), true);
         });
 
         this.decalHolder.render();

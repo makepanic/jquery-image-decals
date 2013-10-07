@@ -1,5 +1,16 @@
 #jquery-decals-composer
 
+##options
+
+    {
+        decals: [],
+        data: [],
+        events: {
+            onDecalClicked: function(){}
+        }
+    }
+
+
 ##requirements
 
 Jquery-decal-composer depends on jquery and jqueryui-draggable.

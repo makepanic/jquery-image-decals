@@ -1,4 +1,4 @@
-IMGCOMP.DecalHolder.prototype.toObject = function (obj) {
+DecalHolder.prototype.toObject = function (obj) {
     var storage = [],
         data,
         $obj;

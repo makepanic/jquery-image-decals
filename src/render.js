@@ -1,6 +1,6 @@
-IMGCOMP.DecalCanvasRenderer = function ($target, compImg) {
-    if (!compImg instanceof IMGCOMP.Img) {
-        throw 'need IMGCOMP.Img instance to render';
+DecalCanvasRenderer = function ($target, compImg) {
+    if (!compImg instanceof Img) {
+        throw 'need Img instance to render';
     }
 
     $target.wrap('<div class="image-composer-wrap"></div>');
@@ -11,7 +11,7 @@ IMGCOMP.DecalCanvasRenderer = function ($target, compImg) {
     this.place();
 };
 
-IMGCOMP.DecalCanvasRenderer.prototype.place = function () {
+DecalCanvasRenderer.prototype.place = function () {
     'use strict';
 
     this.$target.hide();

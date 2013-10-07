@@ -4,7 +4,7 @@
  CompImg
  */
 
-IMGCOMP.Img.prototype.dimension = function (done) {
+Img.prototype.dimension = function (done) {
     'use strict';
 
     var img,

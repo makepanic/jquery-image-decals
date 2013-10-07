@@ -1,4 +1,4 @@
-IMGCOMP.Img.prototype.toObject = function (obj) {
+Img.prototype.toObject = function (obj) {
     var data = {};
 
     data = {

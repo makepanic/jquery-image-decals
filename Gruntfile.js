@@ -6,7 +6,7 @@ module.exports = function (grunt) {
 
         neuter: {
             options: {
-                template: '(function (window) { {%= src %} }(window));'
+                template: '{%= src %}'
             },
             application: {
                 src: 'src/bootstrap.js',

@@ -1,4 +1,4 @@
-IMGCOMP.DecalPalette = function ($target, itemsMap) {
+DecalPalette = function ($target, itemsMap) {
     var that = this,
         item;
 
@@ -7,7 +7,7 @@ IMGCOMP.DecalPalette = function ($target, itemsMap) {
 
     for (item in this.itemsMap) {
         if (this.itemsMap.hasOwnProperty(item)) {
-            this.items.push(new IMGCOMP.Decal(this.itemsMap[item]));
+            this.items.push(new Decal(this.itemsMap[item]));
         }
     }
 
@@ -23,7 +23,7 @@ IMGCOMP.DecalPalette = function ($target, itemsMap) {
         }
     });
 };
-IMGCOMP.DecalPalette.prototype = {
+DecalPalette.prototype = {
     render: function () {
         var frag = document.createDocumentFragment(),
             i,

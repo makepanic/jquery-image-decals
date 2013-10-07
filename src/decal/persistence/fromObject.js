@@ -1,3 +1,3 @@
-IMGCOMP.DecalHolder.prototype.fromObject = function (obj) {
+DecalHolder.prototype.fromObject = function (obj) {
     return {};
 };

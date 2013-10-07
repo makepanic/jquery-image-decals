@@ -1,4 +1,4 @@
-IMGCOMP.Img = function (src) {
+Img = function (src) {
     'use strict';
 
     this.width = -1;

@@ -1,4 +1,4 @@
-IMGCOMP.DecalHolder = function ($target, cfg) {
+DecalHolder = function ($target, cfg) {
     'use strict';
 
     var that = this,
@@ -29,7 +29,7 @@ IMGCOMP.DecalHolder = function ($target, cfg) {
         }
     });
 };
-IMGCOMP.DecalHolder.prototype = {
+DecalHolder.prototype = {
     render: function () {
         'use strict';
 
