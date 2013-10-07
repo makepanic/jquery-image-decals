@@ -13,13 +13,9 @@ IMGCOMP.DecalHolder.prototype.toObject = function (obj) {
             // could be later replaced for rendered width/height
             width: item.width,
             height: item.height,
-            left: $obj.css('left'),
-            top: $obj.css('top')
+            left: item.left,
+            top: item.top
         };
-
-        data.left = parseInt(data.left === 'auto' ? '0' : data.left, 10);
-        data.top = parseInt(data.top === 'auto' ? '0' : data.top, 10);
-
 
         storage.push(data);
     });

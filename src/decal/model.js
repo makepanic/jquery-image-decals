@@ -46,7 +46,35 @@ IMGCOMP.DecalHolder.prototype = {
         });
 
         this.$target.append(frag);
-        this.$target.find('.draggable').draggable({ containment: "parent" });
+        this._applyDraggable();
+    },
+    _applyDraggable: function () {
+        var that = this;
+
+        this.$target.find('.draggable').draggable({
+            // limit movement to parent container
+            containment: 'parent',
+
+            stop: function (e, ui) {
+                // once drag is done, update decal positions
+                var uid = e.target.getAttribute('data-uid');
+
+                that.itemsMap[uid].left = ui.position.left;
+                that.itemsMap[uid].top = ui.position.top;
+
+                that.items.every(function (item) {
+                    var found = false;
+
+                    if (item.uid === uid) {
+                        item.left = ui.position.left;
+                        item.top = ui.position.top;
+                        found = true;
+                    }
+
+                    return !found;
+                });
+            }
+        });
     },
     _createElement: function (item) {
         var span = document.createElement('span');
@@ -57,6 +85,8 @@ IMGCOMP.DecalHolder.prototype = {
         span.style.backgroundImage = 'url(' + item.src + ')';
         span.style.width = item.width + 'px';
         span.style.height = item.height + 'px';
+        span.style.left = item.left + 'px';
+        span.style.top = item.top + 'px';
         return span;
     },
     renderOne: function (from) {
@@ -68,7 +98,7 @@ IMGCOMP.DecalHolder.prototype = {
             item = this.items[from];
             span = this._createElement(item);
             this.$target.append(span);
-            this.$target.find('.draggable').draggable({ containment: "parent" });
+            this._applyDraggable();
         }
     },
     addDecal: function (decal, skipRender) {

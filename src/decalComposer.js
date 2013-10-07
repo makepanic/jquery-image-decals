@@ -4,7 +4,8 @@ IMGCOMP.DecalComposer = function ($target, opts) {
 
     var that = this,
         defaults = {
-            decals: []
+            decals: [],
+            data: []
         };
 
     this.img = new IMGCOMP.Img($target.attr('src'));
@@ -25,6 +26,7 @@ IMGCOMP.DecalComposer.prototype = {
     },
     init: function () {
         var that = this,
+            decalObj,
             //TODO without jquery
             elImgDecals = $('<div class="image-composer-decals"></div>'),
             elPalette = $('<div class="image-composer-palette"></div>');
@@ -48,7 +50,18 @@ IMGCOMP.DecalComposer.prototype = {
             that.decalHolder.addDecal(new IMGCOMP.Decal(that.cfg.decals[data.decal.key]));
         });
 
+        this.cfg.data.forEach(function (item) {
+            decalObj = that.cfg.decals[item.key];
+            decalObj.width = item.width;
+            decalObj.height = item.height;
+            decalObj.left = item.left;
+            decalObj.top = item.top;
+
+            console.log('adding decal', decalObj);
+            that.decalHolder.addDecal(new IMGCOMP.Decal(decalObj), true);
+        });
+
         this.decalHolder.render();
         this.decalPalette.render();
     }
-}
+};

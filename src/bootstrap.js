@@ -2,6 +2,10 @@ require('./vendor/polyfill');
 
 window.IMGCOMP = {
     _lastId: 0,
+    /**
+     *
+     * @returns {string}
+     */
     uid: function () {
         this._lastId += 1;
         return 'image-composer-uid-' + this._lastId;
