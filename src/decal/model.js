@@ -4,7 +4,9 @@ DecalHolder = function ($target, cfg) {
     var that = this,
         i;
 
-    this.items = cfg.items || [];
+    this.scale = cfg.scale;
+    this.items = cfg.items;
+    this.scaleDecalDimension = cfg.scaleDecalDimension;
     this.itemsMap = {};
 
     for (i = 0; i < this.items.length; i += 1) {
@@ -14,6 +16,8 @@ DecalHolder = function ($target, cfg) {
     // config stuff
     this.cfg = cfg;
     this.$target = $target;
+    this.$target.css('width', cfg.dimension.width + 'px');
+    this.$target.css('height', cfg.dimension.height + 'px');
 
     this.$target.on('click', 'span', function (e) {
         console.log('span clicked', e);
@@ -77,16 +81,26 @@ DecalHolder.prototype = {
         });
     },
     _createElement: function (item) {
-        var span = document.createElement('span');
+        var span = document.createElement('span'),
+            intFn = Math.floor;
+
+        console.log('createElement from', item);
 
         span.className = item.key + ' draggable';
         span.title = item.title;
         span.setAttribute('data-uid', item.uid);
         span.style.backgroundImage = 'url(' + item.src + ')';
-        span.style.width = item.width + 'px';
-        span.style.height = item.height + 'px';
-        span.style.left = item.left + 'px';
-        span.style.top = item.top + 'px';
+
+        if (this.scaleDecalDimension) {
+            span.style.width = intFn(this.scale.width * item.width) + 'px';
+            span.style.height = intFn(this.scale.height * item.height) + 'px';
+        } else {
+            span.style.width = item.width + 'px';
+            span.style.height = item.height + 'px';
+        }
+
+        span.style.left = intFn(this.scale.width * item.left) + 'px';
+        span.style.top = intFn(this.scale.height * item.top) + 'px';
         return span;
     },
     renderOne: function (from) {

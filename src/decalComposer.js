@@ -5,6 +5,11 @@ DecalComposer = function ($target, opts) {
     var that = this,
         noop = function () {},
         defaults = {
+            scaleDecalDimension: false,
+            domain: {
+                width: 100,
+                height: 100
+            },
             decals: [],
             data: [],
             events: {
@@ -12,9 +17,14 @@ DecalComposer = function ($target, opts) {
             }
         };
 
-    this.img = new Img($target.attr('src'));
+    this.img = new Img($target);
 
     this.cfg = $.extend({}, defaults, opts);
+    this.scale = {
+        width: 1,
+        height: 1
+    };
+
     this.img.dimension(function () {
         that.init();
     });
@@ -32,16 +42,26 @@ DecalComposer.prototype = {
     init: function () {
         var that = this,
             decalObj,
-            //TODO without jquery
             elImgDecals = $('<div class="image-composer-decals"></div>'),
             elPalette = $('<div class="image-composer-palette"></div>');
+
+        this.scale.width = this.img.width / this.cfg.domain.width;
+        this.scale.height = this.img.height / this.cfg.domain.height;
+
+        console.log('scale', this.scale, 'domain', this.cfg.domain);
+        console.log('img', this.img.width, this.img.height);
 
         this.renderer = new DecalCanvasRenderer(this.$target, this.img);
 
         // create decalHolder container
         this.renderer.$target.parent().find('.image-composer-canvas').append(elImgDecals);
-
         this.decalHolder = new DecalHolder(elImgDecals, {
+            scaleDecalDimension: this.cfg.scaleDecalDimension,
+            dimension: {
+                width: this.img.width,
+                height: this.img.height
+            },
+            scale: this.scale,
             items: []
         });
         this.decalHolder.$target.on('decal-item-clicked', function (e, data) {
@@ -56,7 +76,9 @@ DecalComposer.prototype = {
         });
 
         this.cfg.data.forEach(function (item) {
-            decalObj = that.cfg.decals[item.key];
+            // clone cfg object
+
+            decalObj = $.extend(true, {}, that.cfg.decals[item.key]);
             decalObj.width = item.width;
             decalObj.height = item.height;
             decalObj.left = item.left;

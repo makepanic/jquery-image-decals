@@ -11,7 +11,6 @@ Img.prototype.dimension = function (done) {
         that = this,
         imageLoaded = function () {
 
-            that.ready = true;
             that.width = this.width;
             that.height = this.height;
 

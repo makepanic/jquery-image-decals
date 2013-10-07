@@ -1,10 +1,11 @@
-Img = function (src) {
+Img = function ($el) {
     'use strict';
 
-    this.width = -1;
-    this.height = -1;
-    this.ready = false;
-    this.src = src;
+    var el = $el[0];
+
+    this.width = $el.width();
+    this.height = $el.height();
+    this.src = el.getAttribute('src');
     this.img = undefined;
 };
 
