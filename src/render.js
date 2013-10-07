@@ -1,4 +1,4 @@
-DecalCanvasRenderer = function ($target, compImg) {
+var DecalCanvasRenderer = function ($target, compImg) {
     if (!compImg instanceof Img) {
         throw 'need Img instance to render';
     }

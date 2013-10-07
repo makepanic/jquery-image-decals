@@ -1,4 +1,12 @@
-#jquery-decals-composer
+#jquery-image-decals
+
+##usage
+
+To use __jquery-image-decals__ you have to call the `imageDecals` function on a jquery element.
+
+```
+$('.foobar').imageDecals(/* options */);
+```
 
 ##options
 

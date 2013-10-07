@@ -1,5 +1,3 @@
-//require('./vendor/polyfill');
-
 var _lastId = 0,
     uid = function () {
         _lastId += 1;

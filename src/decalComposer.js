@@ -1,6 +1,4 @@
-DecalComposer = function ($target, opts) {
-
-    // bootstrap layout elements
+var DecalComposer = function ($target, opts) {
 
     var that = this,
         noop = function () {},
@@ -46,9 +44,6 @@ DecalComposer.prototype = {
 
         this.scale.width = this.img.width / this.cfg.domain.width;
         this.scale.height = this.img.height / this.cfg.domain.height;
-
-        console.log('scale', this.scale, 'domain', this.cfg.domain);
-        console.log('img', this.img.width, this.img.height);
 
         this.renderer = new DecalCanvasRenderer(this.$target, this.img);
 

@@ -1,4 +1,4 @@
-DecalHolder = function ($target, cfg) {
+var DecalHolder = function ($target, cfg) {
     'use strict';
 
     var that = this,
@@ -20,7 +20,6 @@ DecalHolder = function ($target, cfg) {
     this.$target.css('height', cfg.dimension.height + 'px');
 
     this.$target.on('click', 'span', function (e) {
-        console.log('span clicked', e);
         if (e.target && e.target.getAttribute('data-uid')) {
             var decalId = e.target.getAttribute('data-uid'),
                 decal = that.itemsMap.hasOwnProperty(decalId) ? that.itemsMap[decalId] : undefined;
@@ -84,8 +83,6 @@ DecalHolder.prototype = {
         var span = document.createElement('span'),
             intFn = Math.floor;
 
-        console.log('createElement from', item);
-
         span.className = item.key + ' draggable';
         span.title = item.title;
         span.setAttribute('data-uid', item.uid);
@@ -127,8 +124,6 @@ DecalHolder.prototype = {
         var removeIndex = -1,
             found = false;
 
-        console.log('removing', decal);
-
         this.items.every(function (item, index) {
             if (item.uid === decal.uid) {
                 removeIndex = index;
@@ -149,5 +144,4 @@ DecalHolder.prototype = {
 
 require('./decal');
 require('./render');
-require('./persistence/fromObject');
-require('./persistence/toObject');
+require('./toObject');

@@ -9,17 +9,7 @@ module.exports = function (grunt) {
                 template: '{%= src %}'
             },
             application: {
-                src: 'src/bootstrap.js',
-                dest: 'dist/app.js'
-            }
-        },
-
-        concat: {
-            options: {
-                separator: ';'
-            },
-            dist: {
-                src: ['src/intro.js', 'dist/app.js', 'src/outro.js'],
+                src: 'src/plugin-wrapper.js',
                 dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
             }
         },
@@ -32,15 +22,23 @@ module.exports = function (grunt) {
                     spawn: false
                 }
             }
+        },
+
+        uglify: {
+            my_target: {
+                files: {
+                    'dist/<%= pkg.name %>-<%= pkg.version %>.min.js': ['dist/<%= pkg.name %>-<%= pkg.version %>.js']
+                }
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-neuter');
-    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
 
     // Default task(s).
-    grunt.registerTask('default', ['neuter', 'concat']);
-    grunt.registerTask('dev', ['neuter', 'concat', 'watch']);
+    grunt.registerTask('default', ['neuter', 'uglify']);
+    grunt.registerTask('dev', ['neuter', 'uglify', 'watch']);
 
 };

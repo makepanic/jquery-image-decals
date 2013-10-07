@@ -1,4 +1,4 @@
-Decal = function (cfg) {
+var Decal = function (cfg) {
     this.key = cfg.key;
     this.src = cfg.src;
     this.width = cfg.width || -1;

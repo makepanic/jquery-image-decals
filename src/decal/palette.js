@@ -1,4 +1,4 @@
-DecalPalette = function ($target, itemsMap) {
+var DecalPalette = function ($target, itemsMap) {
     var that = this,
         item;
 
