@@ -1,5 +1,9 @@
 #jquery-image-decals
 
+##demo
+
+I have a running version of the plugin on [http://lab.rndm.de/jquery-image-decals/](http://lab.rndm.de/jquery-image-decals/).
+
 ##usage
 
 To use __jquery-image-decals__ you have to call the `imageDecals` function on a jquery element.
