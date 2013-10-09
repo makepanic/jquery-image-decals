@@ -14,8 +14,11 @@ $('.foobar').imageDecals(/* options */);
 
 ##options
 
+defaults:
+
 ```
 {
+    showPalette: false,
     clickable: false,
     draggable: false,
     scaleDecalDimension: false,
