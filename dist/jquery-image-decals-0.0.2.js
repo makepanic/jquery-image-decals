@@ -193,7 +193,7 @@ var DecalHolder = function ($target, cfg) {
                 decal = that.itemsMap.hasOwnProperty(decalId) ? that.itemsMap[decalId] : undefined;
 
             that.$target.find('.image-composer-decal-selected').removeClass('image-composer-decal-selected');
-            $(e.target).addClass('image-composer-decal-selected');
+            jQuery(e.target).addClass('image-composer-decal-selected');
             that.$target.trigger('decal-item-clicked', {
                 decal: decal
             });
