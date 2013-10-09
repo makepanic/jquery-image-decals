@@ -5,7 +5,7 @@ DecalHolder.prototype.toObject = function (obj) {
 
     this.items.forEach(function (item) {
 
-        $obj = $('[data-uid=' + item.uid + ']');
+        $obj = jQuery('[data-uid=' + item.uid + ']');
 
         data = {
             key: item.key,

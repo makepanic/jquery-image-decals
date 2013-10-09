@@ -1,20 +1,20 @@
 /*global
- $,
+ jQuery,
  require
  */
 
-$.fn.imageDecals = function (options) {
+jQuery.fn.imageDecals = function (options) {
     'use strict';
 
     var defaults = {
             tools: []
         },
-        settings = $.extend({}, defaults, options);
+        settings = jQuery.extend({}, defaults, options);
 
     require('./bootstrap');
 
     this.each(function () {
-        var $this = $(this),
+        var $this = jQuery(this),
             imageDecals = new DecalComposer($this, settings);
             $this.data('imageDecals', imageDecals);
     });

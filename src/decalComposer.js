@@ -17,7 +17,7 @@ var DecalComposer = function ($target, opts) {
 
     this.img = new Img($target);
 
-    this.cfg = $.extend({}, defaults, opts);
+    this.cfg = jQuery.extend({}, defaults, opts);
     this.scale = {
         width: 1,
         height: 1
@@ -39,8 +39,8 @@ DecalComposer.prototype = {
     init: function () {
         var that = this,
             decalObj,
-            elImgDecals = $('<div class="image-composer-decals"></div>'),
-            elPalette = $('<div class="image-composer-palette"></div>');
+            elImgDecals = jQuery('<div class="image-composer-decals"></div>'),
+            elPalette = jQuery('<div class="image-composer-palette"></div>');
 
         this.scale.width = this.img.width / this.cfg.domain.width;
         this.scale.height = this.img.height / this.cfg.domain.height;
@@ -72,7 +72,7 @@ DecalComposer.prototype = {
         this.cfg.data.forEach(function (item) {
             // clone cfg object
 
-            decalObj = $.extend(true, {}, that.cfg.decals[item.key]);
+            decalObj = jQuery.extend(true, {}, that.cfg.decals[item.key]);
             decalObj.width = item.width;
             decalObj.height = item.height;
             decalObj.left = item.left;
