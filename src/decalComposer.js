@@ -3,6 +3,8 @@ var DecalComposer = function ($target, opts) {
     var that = this,
         noop = function () {},
         defaults = {
+            clickable: false,
+            draggable: false,
             scaleDecalDimension: false,
             domain: {
                 width: 100,
@@ -50,6 +52,8 @@ DecalComposer.prototype = {
         // create decalHolder container
         this.renderer.$target.parent().find('.image-composer-canvas').append(elImgDecals);
         this.decalHolder = new DecalHolder(elImgDecals, {
+            clickable: this.cfg.clickable,
+            draggable: this.cfg.draggable,
             scaleDecalDimension: this.cfg.scaleDecalDimension,
             dimension: {
                 width: this.img.width,

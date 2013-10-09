@@ -24,6 +24,8 @@ var DecalComposer = function ($target, opts) {
     var that = this,
         noop = function () {},
         defaults = {
+            clickable: false,
+            draggable: false,
             scaleDecalDimension: false,
             domain: {
                 width: 100,
@@ -71,6 +73,8 @@ DecalComposer.prototype = {
         // create decalHolder container
         this.renderer.$target.parent().find('.image-composer-canvas').append(elImgDecals);
         this.decalHolder = new DecalHolder(elImgDecals, {
+            clickable: this.cfg.clickable,
+            draggable: this.cfg.draggable,
             scaleDecalDimension: this.cfg.scaleDecalDimension,
             dimension: {
                 width: this.img.width,
@@ -187,18 +191,20 @@ var DecalHolder = function ($target, cfg) {
     this.$target.css('width', cfg.dimension.width + 'px');
     this.$target.css('height', cfg.dimension.height + 'px');
 
-    this.$target.on('click', 'span', function (e) {
-        if (e.target && e.target.getAttribute('data-uid')) {
-            var decalId = e.target.getAttribute('data-uid'),
-                decal = that.itemsMap.hasOwnProperty(decalId) ? that.itemsMap[decalId] : undefined;
+    if (this.cfg.clickable) {
+        this.$target.on('click', 'span', function (e) {
+            if (e.target && e.target.getAttribute('data-uid')) {
+                var decalId = e.target.getAttribute('data-uid'),
+                    decal = that.itemsMap.hasOwnProperty(decalId) ? that.itemsMap[decalId] : undefined;
 
-            that.$target.find('.image-composer-decal-selected').removeClass('image-composer-decal-selected');
-            jQuery(e.target).addClass('image-composer-decal-selected');
-            that.$target.trigger('decal-item-clicked', {
-                decal: decal
-            });
-        }
-    });
+                that.$target.find('.image-composer-decal-selected').removeClass('image-composer-decal-selected');
+                jQuery(e.target).addClass('image-composer-decal-selected');
+                that.$target.trigger('decal-item-clicked', {
+                    decal: decal
+                });
+            }
+        });
+    }
 };
 DecalHolder.prototype = {
     render: function () {
@@ -217,7 +223,10 @@ DecalHolder.prototype = {
         });
 
         this.$target.append(frag);
-        this._applyDraggable();
+
+        if (this.cfg.draggable) {
+            this._applyDraggable();
+        }
     },
     _applyDraggable: function () {
         var that = this;
@@ -251,7 +260,11 @@ DecalHolder.prototype = {
         var span = document.createElement('span'),
             intFn = Math.floor;
 
-        span.className = item.key + ' draggable';
+        span.className = item.key;
+        if (this.cfg.draggable) {
+            span.className += ' draggable';
+        }
+
         span.title = item.title;
         span.setAttribute('data-uid', item.uid);
         span.style.backgroundImage = 'url(' + item.src + ')';
@@ -277,7 +290,10 @@ DecalHolder.prototype = {
             item = this.items[from];
             span = this._createElement(item);
             this.$target.append(span);
-            this._applyDraggable();
+
+            if (this.cfg.draggable) {
+                this._applyDraggable();
+            }
         }
     },
     addDecal: function (decal, skipRender) {

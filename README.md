@@ -12,6 +12,8 @@ $('.foobar').imageDecals(/* options */);
 
 ```
 {
+    clickable: false,
+    draggable: false,
     scaleDecalDimension: false,
     domain: {
         width: 100,
@@ -24,6 +26,14 @@ $('.foobar').imageDecals(/* options */);
     }
 }
 ```
+
+###clickable `Boolean`
+
+Enable or disable click on a decal.
+
+###draggable `Boolean`
+
+Enable or disable drag'n'drop of a decal.
 
 ###scaleDecalDimension `Boolean`
 
