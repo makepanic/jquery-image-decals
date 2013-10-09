@@ -3,6 +3,7 @@ var DecalComposer = function ($target, opts) {
     var that = this,
         noop = function () {},
         defaults = {
+            showPalette: false,
             clickable: false,
             draggable: false,
             scaleDecalDimension: false,
@@ -67,11 +68,13 @@ DecalComposer.prototype = {
         });
 
         // create palette container
-        this.renderer.$target.parent().append(elPalette);
-        this.decalPalette = new DecalPalette(elPalette, this.cfg.decals);
-        this.decalPalette.$target.on('decal-palette-item-clicked', function (e, data) {
-            that.decalHolder.addDecal(new Decal(that.cfg.decals[data.decal.key]));
-        });
+        if (this.cfg.showPalette) {
+            this.renderer.$target.parent().append(elPalette);
+            this.decalPalette = new DecalPalette(elPalette, this.cfg.decals);
+            this.decalPalette.$target.on('decal-palette-item-clicked', function (e, data) {
+                that.decalHolder.addDecal(new Decal(that.cfg.decals[data.decal.key]));
+            });
+        }
 
         this.cfg.data.forEach(function (item) {
             // clone cfg object

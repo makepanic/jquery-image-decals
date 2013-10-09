@@ -5,7 +5,7 @@
 
     <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="src/vendor/jquery-ui-1.10.3.custom.min.js"></script>
-    <script type="text/javascript" src="dist/jquery-image-decals-0.0.3.min.js"></script>
+    <script type="text/javascript" src="dist/jquery-image-decals-0.0.4.min.js"></script>
 
     <style type="text/css">
         .image-composer-decals{
@@ -51,7 +51,7 @@
 </head>
 <body>
 
-<h2>original (600x600) clickable:true, draggable:true</h2>
+<h2>original (600x600) clickable:true, draggable:true, showPalette: true</h2>
 <img class="first" alt="foobar" src="http://i.imgur.com/As8m7lx.png">
 
 <h2>400x400 - scaleDecalDimension: true, clickable: false, draggable: true</h2>
@@ -86,6 +86,7 @@
     $(document).ready(function () {
 
         jQuery('.first').imageDecals({
+            showPalette: true,
             draggable: true,
             clickable: true,
             scaleDecalDimension: true,

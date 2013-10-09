@@ -31,6 +31,10 @@ $('.foobar').imageDecals(/* options */);
 }
 ```
 
+###showPalette `Boolean`
+
+Enable or disable the palette.
+
 ###clickable `Boolean`
 
 Enable or disable click on a decal.
