@@ -36,8 +36,16 @@ DecalPalette.prototype = {
             // basic item element setup
             span = document.createElement('div');
             span.className = 'decal-palette-item';
+
+            if (item.className) {
+                span.className += ' ' + item.className;
+            }
+
             span.setAttribute('data-key', item.key);
-            span.style.backgroundImage = 'url(' + item.src + ')';
+
+            if (item.src) {
+                span.style.backgroundImage = 'url(' + item.src + ')';
+            }
             span.style.width = item.width + 'px';
             span.style.height = item.height + 'px';
 

@@ -24,6 +24,7 @@ var DecalComposer = function ($target, opts) {
     var that = this,
         noop = function () {},
         defaults = {
+            resizable: false,
             showPalette: false,
             clickable: false,
             draggable: false,
@@ -73,7 +74,10 @@ DecalComposer.prototype = {
 
         // create decalHolder container
         this.renderer.$target.parent().find('.image-composer-canvas').append(elImgDecals);
+
         this.decalHolder = new DecalHolder(elImgDecals, {
+            resizable: this.cfg.resizable,
+            modifier: this.cfg.modifier,
             clickable: this.cfg.clickable,
             draggable: this.cfg.draggable,
             scaleDecalDimension: this.cfg.scaleDecalDimension,
@@ -105,6 +109,7 @@ DecalComposer.prototype = {
             decalObj.height = item.height;
             decalObj.left = item.left;
             decalObj.top = item.top;
+            decalObj.allowModifier = that.cfg.allowModifier;
 
             that.decalHolder.addDecal(new Decal(decalObj), true);
         });
@@ -230,6 +235,39 @@ DecalHolder.prototype = {
         if (this.cfg.draggable) {
             this._applyDraggable();
         }
+        if (this.cfg.resizable) {
+            this._applyResizeable();
+        }
+    },
+    _applyResizeable: function () {
+        var that = this;
+
+        this.$target.find('.resizable').resizable({
+            // limit movement to parent container
+            containment: 'parent',
+
+            stop: function (e, ui) {
+                // once resize is done, update decal dimension
+                var uid = e.target.getAttribute('data-uid');
+
+                console.log('ui', ui);
+
+                that.itemsMap[uid].width = ui.size.width;
+                that.itemsMap[uid].height = ui.size.height;
+
+                that.items.every(function (item) {
+                    var found = false;
+
+                    if (item.uid === uid) {
+                        item.width = ui.size.width;
+                        item.height = ui.size.height;
+                        found = true;
+                    }
+
+                    return !found;
+                });
+            }
+        });
     },
     _applyDraggable: function () {
         var that = this;
@@ -263,14 +301,20 @@ DecalHolder.prototype = {
         var span = document.createElement('span'),
             intFn = Math.floor;
 
-        span.className = item.key;
+        span.className = item.className || item.key;
         if (this.cfg.draggable) {
             span.className += ' draggable';
+        }
+        if (this.cfg.resizable) {
+            span.className += ' resizable';
         }
 
         span.title = item.title;
         span.setAttribute('data-uid', item.uid);
-        span.style.backgroundImage = 'url(' + item.src + ')';
+
+        if (item.src) {
+            span.style.backgroundImage = 'url(' + item.src + ')';
+        }
 
         if (this.scaleDecalDimension) {
             span.style.width = intFn(this.scale.width * item.width) + 'px';
@@ -296,6 +340,9 @@ DecalHolder.prototype = {
 
             if (this.cfg.draggable) {
                 this._applyDraggable();
+            }
+            if (this.cfg.resizable) {
+                this._applyResizeable();
             }
         }
     },
@@ -331,14 +378,28 @@ DecalHolder.prototype = {
 
 
 var Decal = function (cfg) {
+
+    var defaultDecal = {
+        key: '',
+        src: undefined,
+        width: -1,
+        height: -1,
+        left: 0,
+        top: 0,
+        title: '',
+        className: undefined
+    };
+    cfg = $.extend({}, defaultDecal, cfg);
+
     this.key = cfg.key;
     this.src = cfg.src;
-    this.width = cfg.width || -1;
-    this.height = cfg.height || -1;
+    this.width = cfg.width;
+    this.height = cfg.height;
     this.left = cfg.left;
     this.top = cfg.top;
-    this.title = cfg.title || '';
+    this.title = cfg.title;
     this.uid = uid();
+    this.className = cfg.className;
 };
 
 DecalHolder.prototype.toObject = function (obj) {
@@ -405,8 +466,16 @@ DecalPalette.prototype = {
             // basic item element setup
             span = document.createElement('div');
             span.className = 'decal-palette-item';
+
+            if (item.className) {
+                span.className += ' ' + item.className;
+            }
+
             span.setAttribute('data-key', item.key);
-            span.style.backgroundImage = 'url(' + item.src + ')';
+
+            if (item.src) {
+                span.style.backgroundImage = 'url(' + item.src + ')';
+            }
             span.style.width = item.width + 'px';
             span.style.height = item.height + 'px';
 

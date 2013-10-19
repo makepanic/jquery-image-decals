@@ -17,7 +17,7 @@ module.exports = function (grunt) {
         watch: {
             scripts: {
                 files: ['src/**/*.js'],
-                tasks: ['neuter'],
+                tasks: ['neuter', 'uglify'],
                 options: {
                     spawn: false
                 }

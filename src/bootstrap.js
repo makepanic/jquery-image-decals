@@ -5,6 +5,7 @@ var _lastId = 0,
     };
 
 require('./decalComposer.js');
+require('./decalComposer.js');
 require('./image/model.js');
 require('./decal/model.js');
 require('./decal/palette.js');

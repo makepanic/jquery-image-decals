@@ -4,9 +4,13 @@
     <title>jquery-image-decals</title>
 
     <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="src/vendor/jquery-ui-1.10.3.custom.min.js"></script>
-    <script type="text/javascript" src="dist/jquery-image-decals-0.0.4.min.js"></script>
 
+    <!-- jqueryui -->
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+    <script type="text/javascript" src="dist/jquery-image-decals-0.0.5.min.js"></script>
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
     <style type="text/css">
         .image-composer-decals{
             position: absolute;
@@ -38,6 +42,14 @@
             border: 1px solid #eee;
             margin: 5px;;
         }
+        .form{
+            border: 2px solid red;
+            border-radius: 10px;
+        }
+        .form-large{
+            border: 20px solid red;
+            border-radius: 1000px;
+        }
         [data-decal]{
             content: attr(data-decal);
         }
@@ -46,19 +58,13 @@
 <body>
 
 <h2>original (600x600) clickable:true, draggable:true, showPalette: true</h2>
-<img class="first" alt="foobar" src="http://i.imgur.com/As8m7lx.png">
-
-<h2>400x400 - scaleDecalDimension: true, clickable: false, draggable: true</h2>
-<img class="second" alt="foobar" src="http://placehold.it/400/400">
-
-<h2>400x400 - scaleDecalDimension: false, clickable: false, draggable: false</h2>
-<img class="third" alt="foobar" src="http://placehold.it/400/400">
+<img class="first" alt="foobar" src="http://placekitten.com/g/600/600">
 
 <script type="text/javascript">
     var decals = {
         'foobar': {
             key: 'foobar',
-            src: 'http://placehold.it/100x100',
+            src: 'http://placekitten.com/g/100/100',
             title: 'foobar',
             width: 100,
             height: 100,
@@ -67,22 +73,41 @@
         },
         'foobar-small': {
             key: 'foobar-small',
-            src: 'http://placehold.it/50x50',
+            src: 'http://placekitten.com/g/50/50',
             title: 'foobar-small',
+            width: 50,
+            height: 50,
+            left: 0,
+            top: 0
+        },
+        'form': {
+            className: 'form',
+            key: 'form',
+            title: 'form',
+            width: 50,
+            height: 50,
+            left: 0,
+            top: 0
+        },
+        'form-large': {
+            className: 'form-large',
+            key: 'form-large',
+            title: 'form-large',
             width: 50,
             height: 50,
             left: 0,
             top: 0
         }
     };
-    var data = [{"key":"foobar-small","width":50,"height":50,"left":238,"top":392},{"key":"foobar","width":100,"height":100,"left":237,"top":217},{"key":"foobar-small","width":50,"height":50,"left":288,"top":392},{"key":"foobar-small","width":50,"height":50,"left":173,"top":217},{"key":"foobar-small","width":50,"height":50,"left":351,"top":217},{"key":"foobar-small","width":50,"height":50,"left":173,"top":267},{"key":"foobar-small","width":50,"height":50,"left":351,"top":267}];
+    var data = [{"key":"foobar-small","width":50,"height":50,"left":238,"top":392},{"key":"foobar","width":100,"height":100,"left":237,"top":217},{"key":"foobar-small","width":50,"height":50,"left":288,"top":392},{"key":"foobar-small","width":50,"height":50,"left":173,"top":217},{"key":"foobar-small","width":50,"height":50,"left":351,"top":217},{"key":"foobar-small","width":50,"height":50,"left":173,"top":267},{"key":"foobar-small","width":50,"height":50,"left":351,"top":267},{"key":"form-large","width":193,"height":101,"left":162,"top":67}];
 
     $(document).ready(function () {
 
         jQuery('.first').imageDecals({
+            resizable: true,
             showPalette: true,
             draggable: true,
-            clickable: true,
+            clickable: false,
             scaleDecalDimension: true,
             domain: {
                 width: 600,
@@ -97,43 +122,6 @@
                 }
             }
         });
-
-        jQuery('.second').imageDecals({
-            clickable: false,
-            draggable: true,
-            scaleDecalDimension: true,
-            domain: {
-                width: 600,
-                height: 600
-            },
-            decals: decals,
-            data: data,
-            events: {
-                onDecalClicked: function (event, decal) {
-                    console.log('decal clicked', event, decal)
-
-                }
-            }
-        });
-
-        jQuery('.third').imageDecals({
-            clickable: false,
-            draggable: false,
-            scaleDecalDimension: false,
-            domain: {
-                width: 600,
-                height: 600
-            },
-            decals: decals,
-            data: data,
-            events: {
-                onDecalClicked: function (event, decal) {
-                    console.log('decal clicked', event, decal)
-
-                }
-            }
-        });
-
     })
 
 

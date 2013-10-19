@@ -55,6 +55,39 @@ DecalHolder.prototype = {
         if (this.cfg.draggable) {
             this._applyDraggable();
         }
+        if (this.cfg.resizable) {
+            this._applyResizeable();
+        }
+    },
+    _applyResizeable: function () {
+        var that = this;
+
+        this.$target.find('.resizable').resizable({
+            // limit movement to parent container
+            containment: 'parent',
+
+            stop: function (e, ui) {
+                // once resize is done, update decal dimension
+                var uid = e.target.getAttribute('data-uid');
+
+                console.log('ui', ui);
+
+                that.itemsMap[uid].width = ui.size.width;
+                that.itemsMap[uid].height = ui.size.height;
+
+                that.items.every(function (item) {
+                    var found = false;
+
+                    if (item.uid === uid) {
+                        item.width = ui.size.width;
+                        item.height = ui.size.height;
+                        found = true;
+                    }
+
+                    return !found;
+                });
+            }
+        });
     },
     _applyDraggable: function () {
         var that = this;
@@ -88,14 +121,20 @@ DecalHolder.prototype = {
         var span = document.createElement('span'),
             intFn = Math.floor;
 
-        span.className = item.key;
+        span.className = item.className || item.key;
         if (this.cfg.draggable) {
             span.className += ' draggable';
+        }
+        if (this.cfg.resizable) {
+            span.className += ' resizable';
         }
 
         span.title = item.title;
         span.setAttribute('data-uid', item.uid);
-        span.style.backgroundImage = 'url(' + item.src + ')';
+
+        if (item.src) {
+            span.style.backgroundImage = 'url(' + item.src + ')';
+        }
 
         if (this.scaleDecalDimension) {
             span.style.width = intFn(this.scale.width * item.width) + 'px';
@@ -121,6 +160,9 @@ DecalHolder.prototype = {
 
             if (this.cfg.draggable) {
                 this._applyDraggable();
+            }
+            if (this.cfg.resizable) {
+                this._applyResizeable();
             }
         }
     },
