@@ -4,11 +4,18 @@ var _lastId = 0,
         return 'image-composer-uid-' + _lastId;
     };
 
+var Events = {
+    decalItemFocusChanged: 'decal-item-focus-changed',
+    decalPaletteItemClicked: 'decal-palette-item-clicked',
+    decalActionClicked: 'decal-action-clicked',
+    decalItemClicked: 'decal-item-clicked'
+};
+
 require('./decalComposer.js');
 require('./decalComposer.js');
-require('./image/model.js');
-require('./decal/model.js');
+require('./image/img.js');
+require('./decal/decal.js');
 require('./decal/palette.js');
-require('./decal/options.js');
+require('./decal/actions.js');
 require('./render.js');
 

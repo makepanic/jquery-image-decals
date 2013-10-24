@@ -18,12 +18,23 @@ var _lastId = 0,
         return 'image-composer-uid-' + _lastId;
     };
 
+var Events = {
+    decalItemFocusChanged: 'decal-item-focus-changed',
+    decalPaletteItemClicked: 'decal-palette-item-clicked',
+    decalActionClicked: 'decal-action-clicked',
+    decalItemClicked: 'decal-item-clicked'
+};
+
 
 var DecalComposer = function ($target, opts) {
 
     var that = this,
         noop = function () {},
         defaults = {
+            actions: [],
+            actionBar: undefined,
+            showActions: false,
+
             resizable: false,
             showPalette: false,
             clickable: false,
@@ -40,6 +51,7 @@ var DecalComposer = function ($target, opts) {
             }
         };
 
+    this.selectedDecal = null;
     this.img = new Img($target);
 
     this.cfg = jQuery.extend({}, defaults, opts);
@@ -88,16 +100,34 @@ DecalComposer.prototype = {
             scale: this.scale,
             items: []
         });
-        this.decalHolder.$target.on('decal-item-clicked', function (e, data) {
+
+        this.decalHolder.$target.on(Events.decalItemClicked, function (e, data) {
+            that.selectedDecal = data.decal;
+            that.actionBar.$target.show();
             that.events.onDecalClicked.call(e.target, e, data.decal);
+        });
+        this.decalHolder.$target.on(Events.decalItemFocusChanged, function (e, data) {
+            if (data.focus === false) {
+                that.selectedDecal = null;
+                that.actionBar.$target.hide();
+            }
         });
 
         // create palette container
         if (this.cfg.showPalette) {
             this.renderer.$target.parent().append(elPalette);
             this.decalPalette = new DecalPalette(elPalette, this.cfg.decals);
-            this.decalPalette.$target.on('decal-palette-item-clicked', function (e, data) {
+            this.decalPalette.$target.on(Events.decalPaletteItemClicked, function (e, data) {
                 that.decalHolder.addDecal(new Decal(that.cfg.decals[data.decal.key]));
+            });
+        }
+
+        if (this.cfg.showActions) {
+            // decal-action-clicked
+            this.actionBar = new DecalActionBar(this.cfg.actionBar, this.cfg.actions);
+            this.actionBar.$target.on(Events.decalActionClicked, function (e, data) {
+                var action = data.action;
+                action.trigger(that.selectedDecal, e, that.decalHolder);
             });
         }
 
@@ -115,7 +145,15 @@ DecalComposer.prototype = {
         });
 
         this.decalHolder.render();
-        this.decalPalette.render();
+
+        if (this.cfg.showPalette) {
+            this.decalPalette.render();
+        }
+        if (this.cfg.showActions) {
+            this.actionBar.$target.hide();
+            this.actionBar.render();
+        }
+
     }
 };
 
@@ -193,7 +231,6 @@ var DecalHolder = function ($target, cfg) {
         this.itemsMap[this.items[i].uid] = this.items[i];
     }
 
-    // config stuff
     this.cfg = cfg;
     this.$target = $target;
     this.$target.css('width', cfg.dimension.width + 'px');
@@ -207,7 +244,7 @@ var DecalHolder = function ($target, cfg) {
 
                 that.$target.find('.image-composer-decal-selected').removeClass('image-composer-decal-selected');
                 jQuery(e.target).addClass('image-composer-decal-selected');
-                that.$target.trigger('decal-item-clicked', {
+                that.$target.trigger(Events.decalItemClicked, {
                     decal: decal
                 });
             }
@@ -227,7 +264,7 @@ DecalHolder.prototype = {
             // basic item element bootstrap
             span = that._createElement(item);
             frag.appendChild(span);
-            
+
         });
 
         this.$target.append(frag);
@@ -249,8 +286,6 @@ DecalHolder.prototype = {
             stop: function (e, ui) {
                 // once resize is done, update decal dimension
                 var uid = e.target.getAttribute('data-uid');
-
-                console.log('ui', ui);
 
                 that.itemsMap[uid].width = ui.size.width;
                 that.itemsMap[uid].height = ui.size.height;
@@ -354,6 +389,12 @@ DecalHolder.prototype = {
             this.renderOne(this.items.length - 1);
         }
     },
+    removeFocus: function () {
+        this.$target.find('.image-composer-decal-selected').removeClass('image-composer-decal-selected');
+        this.$target.trigger(Events.decalItemFocusChanged, {
+            focus: false
+        });
+    },
     removeDecal: function (decal) {
         var removeIndex = -1,
             found = false;
@@ -375,7 +416,6 @@ DecalHolder.prototype = {
         }
     }
 };
-
 
 var Decal = function (cfg) {
 
@@ -401,6 +441,7 @@ var Decal = function (cfg) {
     this.uid = uid();
     this.className = cfg.className;
 };
+
 
 DecalHolder.prototype.toObject = function (obj) {
     var storage = [],
@@ -447,7 +488,7 @@ var DecalPalette = function ($target, itemsMap) {
             var decalId = e.target.getAttribute('data-key'),
                 decal = that.itemsMap.hasOwnProperty(decalId) ? that.itemsMap[decalId] : undefined;
 
-            that.$target.trigger('decal-palette-item-clicked', {
+            that.$target.trigger(Events.decalPaletteItemClicked, {
                 decal: decal
             });
         }
@@ -485,6 +526,64 @@ DecalPalette.prototype = {
         this.$target.append(frag);
     }
 }
+
+var DecalActionBar = function ($target, actions) {
+    var that = this;
+
+    this.className = 'decal-action-bar';
+    this.actionClassName = 'decal-action';
+    this.actions = {};
+
+    // create action map
+    actions.forEach(function (action) {
+        that.actions[action.key] = action;
+    });
+
+    this.$target = $target;
+    this.$target.on('click', '.' + this.actionClassName, function (e) {
+        if (e.target && e.target.getAttribute('data-key')) {
+            var actionKey = e.target.getAttribute('data-key'),
+                action = that.actions.hasOwnProperty(actionKey) ? that.actions[actionKey] : undefined;
+
+            that.$target.trigger(Events.decalActionClicked, {
+                action: action
+            });
+        }
+    });
+};
+DecalActionBar.prototype = {
+    render: function () {
+        var frag = document.createDocumentFragment(),
+            i,
+            el,
+            actionIndex,
+            action;
+
+        for (actionIndex in this.actions) {
+            if (this.actions.hasOwnProperty(actionIndex)) {
+                action = this.actions[actionIndex];
+
+                // basic item element setup
+                el = document.createElement('div');
+                el.className = this.actionClassName;
+
+                // add className if given
+                if (action.className.length) {
+                    el.className += ' ' + action.className;
+                }
+                // add background image if given
+                if (action.background.length) {
+                    el.style.backgroundImage = 'url(' + action.background + ')';
+                }
+
+                el.setAttribute('data-key', action.key);
+                frag.appendChild(el);
+            }
+        }
+
+        this.$target.append(frag);
+    }
+};
 
 var DecalCanvasRenderer = function ($target, compImg) {
     if (!compImg instanceof Img) {

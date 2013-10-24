@@ -12,6 +12,12 @@
 
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
     <style type="text/css">
+        .actionbar div{
+            width: 50px;
+            height: 50px;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
         .image-composer-decals{
             position: absolute;
             left: 0;
@@ -58,9 +64,23 @@
 <body>
 
 <h2>original (600x600) clickable:true, draggable:true, showPalette: true</h2>
+<div class="actionbar"></div>
 <img class="first" alt="foobar" src="http://placekitten.com/g/600/600">
 
 <script type="text/javascript">
+    var decalActions = [{
+        background: 'http://placekitten.com/g/20/20',
+        key: 'delete',
+        className: '',
+        title: 'delete',
+        trigger: function (decal, element, decalHolder) {
+            if (decal) {
+                decalHolder.removeDecal(decal);
+                decalHolder.removeFocus();
+            }
+        }
+    }];
+
     var decals = {
         'foobar': {
             key: 'foobar',
@@ -104,10 +124,14 @@
     $(document).ready(function () {
 
         jQuery('.first').imageDecals({
+            actionBar: $('.actionbar'),
+            showActions: true,
+            actions: decalActions,
+
             resizable: true,
             showPalette: true,
             draggable: true,
-            clickable: false,
+            clickable: true,
             scaleDecalDimension: true,
             domain: {
                 width: 600,
@@ -117,8 +141,6 @@
             data: data,
             events: {
                 onDecalClicked: function (event, decal) {
-                    console.log('decal clicked', event, decal)
-
                 }
             }
         });

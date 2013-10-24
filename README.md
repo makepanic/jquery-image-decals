@@ -18,6 +18,9 @@ defaults:
 
 ```
 {
+    showActions: false,
+    actionBar: undefined,
+    actions: [],
     showPalette: false,
     clickable: false,
     draggable: false,

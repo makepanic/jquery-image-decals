@@ -17,7 +17,7 @@ var DecalPalette = function ($target, itemsMap) {
             var decalId = e.target.getAttribute('data-key'),
                 decal = that.itemsMap.hasOwnProperty(decalId) ? that.itemsMap[decalId] : undefined;
 
-            that.$target.trigger('decal-palette-item-clicked', {
+            that.$target.trigger(Events.decalPaletteItemClicked, {
                 decal: decal
             });
         }

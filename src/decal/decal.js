@@ -1,3 +1,5 @@
+require('./holder');
+
 var Decal = function (cfg) {
 
     var defaultDecal = {
@@ -22,3 +24,5 @@ var Decal = function (cfg) {
     this.uid = uid();
     this.className = cfg.className;
 };
+
+require('./toObject');

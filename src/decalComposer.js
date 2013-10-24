@@ -3,6 +3,10 @@ var DecalComposer = function ($target, opts) {
     var that = this,
         noop = function () {},
         defaults = {
+            actions: [],
+            actionBar: undefined,
+            showActions: false,
+
             resizable: false,
             showPalette: false,
             clickable: false,
@@ -19,6 +23,7 @@ var DecalComposer = function ($target, opts) {
             }
         };
 
+    this.selectedDecal = null;
     this.img = new Img($target);
 
     this.cfg = jQuery.extend({}, defaults, opts);
@@ -67,16 +72,34 @@ DecalComposer.prototype = {
             scale: this.scale,
             items: []
         });
-        this.decalHolder.$target.on('decal-item-clicked', function (e, data) {
+
+        this.decalHolder.$target.on(Events.decalItemClicked, function (e, data) {
+            that.selectedDecal = data.decal;
+            that.actionBar.$target.show();
             that.events.onDecalClicked.call(e.target, e, data.decal);
+        });
+        this.decalHolder.$target.on(Events.decalItemFocusChanged, function (e, data) {
+            if (data.focus === false) {
+                that.selectedDecal = null;
+                that.actionBar.$target.hide();
+            }
         });
 
         // create palette container
         if (this.cfg.showPalette) {
             this.renderer.$target.parent().append(elPalette);
             this.decalPalette = new DecalPalette(elPalette, this.cfg.decals);
-            this.decalPalette.$target.on('decal-palette-item-clicked', function (e, data) {
+            this.decalPalette.$target.on(Events.decalPaletteItemClicked, function (e, data) {
                 that.decalHolder.addDecal(new Decal(that.cfg.decals[data.decal.key]));
+            });
+        }
+
+        if (this.cfg.showActions) {
+            // decal-action-clicked
+            this.actionBar = new DecalActionBar(this.cfg.actionBar, this.cfg.actions);
+            this.actionBar.$target.on(Events.decalActionClicked, function (e, data) {
+                var action = data.action;
+                action.trigger(that.selectedDecal, e, that.decalHolder);
             });
         }
 
@@ -94,6 +117,14 @@ DecalComposer.prototype = {
         });
 
         this.decalHolder.render();
-        this.decalPalette.render();
+
+        if (this.cfg.showPalette) {
+            this.decalPalette.render();
+        }
+        if (this.cfg.showActions) {
+            this.actionBar.$target.hide();
+            this.actionBar.render();
+        }
+
     }
 };

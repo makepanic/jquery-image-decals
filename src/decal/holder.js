@@ -13,7 +13,6 @@ var DecalHolder = function ($target, cfg) {
         this.itemsMap[this.items[i].uid] = this.items[i];
     }
 
-    // config stuff
     this.cfg = cfg;
     this.$target = $target;
     this.$target.css('width', cfg.dimension.width + 'px');
@@ -27,7 +26,7 @@ var DecalHolder = function ($target, cfg) {
 
                 that.$target.find('.image-composer-decal-selected').removeClass('image-composer-decal-selected');
                 jQuery(e.target).addClass('image-composer-decal-selected');
-                that.$target.trigger('decal-item-clicked', {
+                that.$target.trigger(Events.decalItemClicked, {
                     decal: decal
                 });
             }
@@ -47,7 +46,7 @@ DecalHolder.prototype = {
             // basic item element bootstrap
             span = that._createElement(item);
             frag.appendChild(span);
-            
+
         });
 
         this.$target.append(frag);
@@ -69,8 +68,6 @@ DecalHolder.prototype = {
             stop: function (e, ui) {
                 // once resize is done, update decal dimension
                 var uid = e.target.getAttribute('data-uid');
-
-                console.log('ui', ui);
 
                 that.itemsMap[uid].width = ui.size.width;
                 that.itemsMap[uid].height = ui.size.height;
@@ -174,6 +171,12 @@ DecalHolder.prototype = {
             this.renderOne(this.items.length - 1);
         }
     },
+    removeFocus: function () {
+        this.$target.find('.image-composer-decal-selected').removeClass('image-composer-decal-selected');
+        this.$target.trigger(Events.decalItemFocusChanged, {
+            focus: false
+        });
+    },
     removeDecal: function (decal) {
         var removeIndex = -1,
             found = false;
@@ -195,7 +198,3 @@ DecalHolder.prototype = {
         }
     }
 };
-
-require('./decal');
-require('./render');
-require('./toObject');
