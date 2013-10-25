@@ -1,12 +1,19 @@
-var DecalActionBar = function ($target, actions) {
-    var that = this;
+var DecalActionBar = function ($target, givenCfg) {
+    var that = this,
+        defaultCfg = {
+            actions: [],
+            actionTemplate: undefined
+        },
+        cfg = $.extend({}, defaultCfg, givenCfg);
+
 
     this.className = 'decal-action-bar';
     this.actionClassName = 'decal-action';
     this.actions = {};
+    this.template = cfg.actionTemplate;
 
     // create action map
-    actions.forEach(function (action) {
+    cfg.actions.forEach(function (action) {
         that.actions[action.key] = action;
     });
 
@@ -38,13 +45,19 @@ DecalActionBar.prototype = {
                 el = document.createElement('div');
                 el.className = this.actionClassName;
 
-                // add className if given
-                if (action.className.length) {
-                    el.className += ' ' + action.className;
-                }
-                // add background image if given
-                if (action.background.length) {
-                    el.style.backgroundImage = 'url(' + action.background + ')';
+                if (typeof this.template === 'function') {
+                    // has template function
+                    el.innerHTML = this.template(action);
+                } else {
+                    // use some default styling
+                    // add className if given
+                    if (action.className.length) {
+                        el.className += ' ' + action.className;
+                    }
+                    // add background image if given
+                    if (action.background.length) {
+                        el.style.backgroundImage = 'url(' + action.background + ')';
+                    }
                 }
 
                 el.setAttribute('data-key', action.key);

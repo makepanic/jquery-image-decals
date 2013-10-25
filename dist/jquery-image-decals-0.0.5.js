@@ -34,6 +34,7 @@ var DecalComposer = function ($target, opts) {
             actions: [],
             actionBar: undefined,
             showActions: false,
+            actionTemplate: undefined,
 
             resizable: false,
             showPalette: false,
@@ -124,7 +125,10 @@ DecalComposer.prototype = {
 
         if (this.cfg.showActions) {
             // decal-action-clicked
-            this.actionBar = new DecalActionBar(this.cfg.actionBar, this.cfg.actions);
+            this.actionBar = new DecalActionBar(this.cfg.actionBar, {
+                actions: this.cfg.actions,
+                actionTemplate: this.cfg.actionTemplate
+            });
             this.actionBar.$target.on(Events.decalActionClicked, function (e, data) {
                 var action = data.action;
                 action.trigger(that.selectedDecal, e, that.decalHolder);
@@ -527,15 +531,22 @@ DecalPalette.prototype = {
     }
 }
 
-var DecalActionBar = function ($target, actions) {
-    var that = this;
+var DecalActionBar = function ($target, givenCfg) {
+    var that = this,
+        defaultCfg = {
+            actions: [],
+            actionTemplate: undefined
+        },
+        cfg = $.extend({}, defaultCfg, givenCfg);
+
 
     this.className = 'decal-action-bar';
     this.actionClassName = 'decal-action';
     this.actions = {};
+    this.template = cfg.actionTemplate;
 
     // create action map
-    actions.forEach(function (action) {
+    cfg.actions.forEach(function (action) {
         that.actions[action.key] = action;
     });
 
@@ -567,13 +578,19 @@ DecalActionBar.prototype = {
                 el = document.createElement('div');
                 el.className = this.actionClassName;
 
-                // add className if given
-                if (action.className.length) {
-                    el.className += ' ' + action.className;
-                }
-                // add background image if given
-                if (action.background.length) {
-                    el.style.backgroundImage = 'url(' + action.background + ')';
+                if (typeof this.template === 'function') {
+                    // has template function
+                    el.innerHTML = this.template(action);
+                } else {
+                    // use some default styling
+                    // add className if given
+                    if (action.className.length) {
+                        el.className += ' ' + action.className;
+                    }
+                    // add background image if given
+                    if (action.background.length) {
+                        el.style.backgroundImage = 'url(' + action.background + ')';
+                    }
                 }
 
                 el.setAttribute('data-key', action.key);

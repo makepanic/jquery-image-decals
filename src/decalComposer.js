@@ -6,6 +6,7 @@ var DecalComposer = function ($target, opts) {
             actions: [],
             actionBar: undefined,
             showActions: false,
+            actionTemplate: undefined,
 
             resizable: false,
             showPalette: false,
@@ -96,7 +97,10 @@ DecalComposer.prototype = {
 
         if (this.cfg.showActions) {
             // decal-action-clicked
-            this.actionBar = new DecalActionBar(this.cfg.actionBar, this.cfg.actions);
+            this.actionBar = new DecalActionBar(this.cfg.actionBar, {
+                actions: this.cfg.actions,
+                actionTemplate: this.cfg.actionTemplate
+            });
             this.actionBar.$target.on(Events.decalActionClicked, function (e, data) {
                 var action = data.action;
                 action.trigger(that.selectedDecal, e, that.decalHolder);

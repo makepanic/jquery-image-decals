@@ -59,6 +59,10 @@
         [data-decal]{
             content: attr(data-decal);
         }
+        .first{
+            width: 600px;
+            height: 600px;
+        }
     </style>
 </head>
 <body>
@@ -127,6 +131,9 @@
             actionBar: $('.actionbar'),
             showActions: true,
             actions: decalActions,
+            actionTemplate: function (action) {
+                return '<i class="' + action.key + '"></i> ' + action.title;
+            },
 
             resizable: true,
             showPalette: true,
