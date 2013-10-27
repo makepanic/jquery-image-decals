@@ -28,6 +28,7 @@ DecalPalette.prototype = {
         var frag = document.createDocumentFragment(),
             i,
             span,
+            wrapper,
             item;
 
         for (i = 0; i < this.items.length; i += 1) {
@@ -36,6 +37,9 @@ DecalPalette.prototype = {
             // basic item element setup
             span = document.createElement('div');
             span.className = 'decal-palette-item';
+
+            wrapper = document.createElement('div');
+            wrapper.className = 'decal-palette-item-wrapper';
 
             if (item.className) {
                 span.className += ' ' + item.className;
@@ -49,7 +53,8 @@ DecalPalette.prototype = {
             span.style.width = item.width + 'px';
             span.style.height = item.height + 'px';
 
-            frag.appendChild(span);
+            wrapper.appendChild(span)
+            frag.appendChild(wrapper);
         }
 
         this.$target.append(frag);

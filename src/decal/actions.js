@@ -29,13 +29,15 @@ var DecalActionBar = function ($target, givenCfg) {
 
         // prepend $target before holder parent
         this.$target = jQuery(el);
-        cfg.holder.$target.parent().before(this.$target);
+        cfg.holder.$target.parent().after(this.$target);
     }
 
 
     this.$target.on('click', '.' + this.actionClassName, function (e) {
-        if (e.target && e.target.getAttribute('data-key')) {
-            var actionKey = e.target.getAttribute('data-key'),
+        if (e.target &&
+            // check if target has key or parent
+            (e.target.getAttribute('data-key') || e.target.parentNode.getAttribute('data-key'))) {
+            var actionKey = e.target.getAttribute('data-key') || e.target.parentNode.getAttribute('data-key'),
                 action = that.actions.hasOwnProperty(actionKey) ? that.actions[actionKey] : undefined;
 
             that.$target.trigger(Events.decalActionClicked, {

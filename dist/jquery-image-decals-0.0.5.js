@@ -36,6 +36,7 @@ var DecalComposer = function ($target, opts) {
             showActions: false,
             actionTemplate: undefined,
 
+            clickUnfocus: false,
             resizable: false,
             showPalette: false,
             clickable: false,
@@ -90,6 +91,7 @@ DecalComposer.prototype = {
         this.renderer.$target.parent().find('.image-composer-canvas').append(elImgDecals);
 
         this.decalHolder = new DecalHolder(elImgDecals, {
+            clickUnfocus: this.cfg.clickUnfocus,
             resizable: this.cfg.resizable,
             modifier: this.cfg.modifier,
             clickable: this.cfg.clickable,
@@ -247,6 +249,14 @@ var DecalHolder = function ($target, cfg) {
     this.$target.css('width', cfg.dimension.width + 'px');
     this.$target.css('height', cfg.dimension.height + 'px');
 
+    if (this.cfg.clickUnfocus) {
+        this.$target.on('click', function (e) {
+            if (e.target.className === 'image-composer-decals') {
+                that.removeFocus();
+            }
+        })
+    }
+
     if (this.cfg.clickable) {
         this.$target.on('click', 'span', function (e) {
             if (e.target && e.target.getAttribute('data-uid')) {
@@ -293,6 +303,7 @@ DecalHolder.prototype = {
         this.$target.find('.resizable').resizable({
             // limit movement to parent container
             containment: 'parent',
+            aspectRatio: true,
 
             stop: function (e, ui) {
                 // once resize is done, update decal dimension
@@ -510,6 +521,7 @@ DecalPalette.prototype = {
         var frag = document.createDocumentFragment(),
             i,
             span,
+            wrapper,
             item;
 
         for (i = 0; i < this.items.length; i += 1) {
@@ -518,6 +530,9 @@ DecalPalette.prototype = {
             // basic item element setup
             span = document.createElement('div');
             span.className = 'decal-palette-item';
+
+            wrapper = document.createElement('div');
+            wrapper.className = 'decal-palette-item-wrapper';
 
             if (item.className) {
                 span.className += ' ' + item.className;
@@ -531,7 +546,8 @@ DecalPalette.prototype = {
             span.style.width = item.width + 'px';
             span.style.height = item.height + 'px';
 
-            frag.appendChild(span);
+            wrapper.appendChild(span)
+            frag.appendChild(wrapper);
         }
 
         this.$target.append(frag);
@@ -569,13 +585,15 @@ var DecalActionBar = function ($target, givenCfg) {
 
         // prepend $target before holder parent
         this.$target = jQuery(el);
-        cfg.holder.$target.parent().before(this.$target);
+        cfg.holder.$target.parent().after(this.$target);
     }
 
 
     this.$target.on('click', '.' + this.actionClassName, function (e) {
-        if (e.target && e.target.getAttribute('data-key')) {
-            var actionKey = e.target.getAttribute('data-key'),
+        if (e.target &&
+            // check if target has key or parent
+            (e.target.getAttribute('data-key') || e.target.parentNode.getAttribute('data-key'))) {
+            var actionKey = e.target.getAttribute('data-key') || e.target.parentNode.getAttribute('data-key'),
                 action = that.actions.hasOwnProperty(actionKey) ? that.actions[actionKey] : undefined;
 
             that.$target.trigger(Events.decalActionClicked, {

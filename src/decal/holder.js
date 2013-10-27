@@ -18,6 +18,14 @@ var DecalHolder = function ($target, cfg) {
     this.$target.css('width', cfg.dimension.width + 'px');
     this.$target.css('height', cfg.dimension.height + 'px');
 
+    if (this.cfg.clickUnfocus) {
+        this.$target.on('click', function (e) {
+            if (e.target.className === 'image-composer-decals') {
+                that.removeFocus();
+            }
+        })
+    }
+
     if (this.cfg.clickable) {
         this.$target.on('click', 'span', function (e) {
             if (e.target && e.target.getAttribute('data-uid')) {
@@ -64,6 +72,7 @@ DecalHolder.prototype = {
         this.$target.find('.resizable').resizable({
             // limit movement to parent container
             containment: 'parent',
+            aspectRatio: true,
 
             stop: function (e, ui) {
                 // once resize is done, update decal dimension

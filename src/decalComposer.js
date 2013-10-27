@@ -8,6 +8,7 @@ var DecalComposer = function ($target, opts) {
             showActions: false,
             actionTemplate: undefined,
 
+            clickUnfocus: false,
             resizable: false,
             showPalette: false,
             clickable: false,
@@ -62,6 +63,7 @@ DecalComposer.prototype = {
         this.renderer.$target.parent().find('.image-composer-canvas').append(elImgDecals);
 
         this.decalHolder = new DecalHolder(elImgDecals, {
+            clickUnfocus: this.cfg.clickUnfocus,
             resizable: this.cfg.resizable,
             modifier: this.cfg.modifier,
             clickable: this.cfg.clickable,
