@@ -76,13 +76,18 @@ DecalComposer.prototype = {
 
         this.decalHolder.$target.on(Events.decalItemClicked, function (e, data) {
             that.selectedDecal = data.decal;
-            that.actionBar.$target.show();
+            if (that.showActions) {
+                that.actionBar.$target.show();
+            }
             that.events.onDecalClicked.call(e.target, e, data.decal);
         });
         this.decalHolder.$target.on(Events.decalItemFocusChanged, function (e, data) {
             if (data.focus === false) {
                 that.selectedDecal = null;
-                that.actionBar.$target.hide();
+
+                if (that.showActions) {
+                    that.actionBar.$target.hide();
+                }
             }
         });
 
