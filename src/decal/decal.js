@@ -12,7 +12,7 @@ var Decal = function (cfg) {
         title: '',
         className: undefined
     };
-    cfg = $.extend({}, defaultDecal, cfg);
+    cfg = jQuery.extend({}, defaultDecal, cfg);
 
     this.key = cfg.key;
     this.src = cfg.src;

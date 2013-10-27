@@ -4,7 +4,7 @@ var DecalActionBar = function ($target, givenCfg) {
             actions: [],
             actionTemplate: undefined
         },
-        cfg = $.extend({}, defaultCfg, givenCfg);
+        cfg = jQuery.extend({}, defaultCfg, givenCfg);
 
 
     this.className = 'decal-action-bar';
