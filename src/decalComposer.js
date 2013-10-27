@@ -77,8 +77,8 @@ DecalComposer.prototype = {
 
         this.decalHolder.$target.on(Events.decalItemClicked, function (e, data) {
             that.selectedDecal = data.decal;
-            if (that.showActions) {
-                that.actionBar.$target.show();
+            if (that.cfg.showActions) {
+                that.actionBar.show();
             }
             that.events.onDecalClicked.call(e.target, e, data.decal);
         });
@@ -86,8 +86,8 @@ DecalComposer.prototype = {
             if (data.focus === false) {
                 that.selectedDecal = null;
 
-                if (that.showActions) {
-                    that.actionBar.$target.hide();
+                if (that.cfg.showActions) {
+                    that.actionBar.hide();
                 }
             }
         });
@@ -105,7 +105,8 @@ DecalComposer.prototype = {
             // decal-action-clicked
             this.actionBar = new DecalActionBar(this.cfg.actionBar, {
                 actions: this.cfg.actions,
-                actionTemplate: this.cfg.actionTemplate
+                actionTemplate: this.cfg.actionTemplate,
+                holder: this.decalHolder
             });
             this.actionBar.$target.on(Events.decalActionClicked, function (e, data) {
                 var action = data.action;
@@ -132,7 +133,7 @@ DecalComposer.prototype = {
             this.decalPalette.render();
         }
         if (this.cfg.showActions) {
-            this.actionBar.$target.hide();
+            this.actionBar.hide();
             this.actionBar.render();
         }
 

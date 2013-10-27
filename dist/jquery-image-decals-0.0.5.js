@@ -105,8 +105,8 @@ DecalComposer.prototype = {
 
         this.decalHolder.$target.on(Events.decalItemClicked, function (e, data) {
             that.selectedDecal = data.decal;
-            if (that.showActions) {
-                that.actionBar.$target.show();
+            if (that.cfg.showActions) {
+                that.actionBar.show();
             }
             that.events.onDecalClicked.call(e.target, e, data.decal);
         });
@@ -114,8 +114,8 @@ DecalComposer.prototype = {
             if (data.focus === false) {
                 that.selectedDecal = null;
 
-                if (that.showActions) {
-                    that.actionBar.$target.hide();
+                if (that.cfg.showActions) {
+                    that.actionBar.hide();
                 }
             }
         });
@@ -133,7 +133,8 @@ DecalComposer.prototype = {
             // decal-action-clicked
             this.actionBar = new DecalActionBar(this.cfg.actionBar, {
                 actions: this.cfg.actions,
-                actionTemplate: this.cfg.actionTemplate
+                actionTemplate: this.cfg.actionTemplate,
+                holder: this.decalHolder
             });
             this.actionBar.$target.on(Events.decalActionClicked, function (e, data) {
                 var action = data.action;
@@ -160,7 +161,7 @@ DecalComposer.prototype = {
             this.decalPalette.render();
         }
         if (this.cfg.showActions) {
-            this.actionBar.$target.hide();
+            this.actionBar.hide();
             this.actionBar.render();
         }
 
@@ -541,12 +542,14 @@ var DecalActionBar = function ($target, givenCfg) {
     var that = this,
         defaultCfg = {
             actions: [],
-            actionTemplate: undefined
+            actionTemplate: undefined,
+            holder: undefined
         },
         cfg = jQuery.extend({}, defaultCfg, givenCfg);
 
 
     this.className = 'decal-action-bar';
+    this.hiddenclassName = 'action-bar-hidden';
     this.actionClassName = 'decal-action';
     this.actions = {};
     this.template = cfg.actionTemplate;
@@ -556,7 +559,20 @@ var DecalActionBar = function ($target, givenCfg) {
         that.actions[action.key] = action;
     });
 
-    this.$target = $target;
+    if ($target && $target.length) {
+        // has target and found element
+        this.$target = $target;
+    } else {
+        // create element
+        var el = document.createElement('div');
+        el.className = this.className;
+
+        // prepend $target before holder parent
+        this.$target = jQuery(el);
+        cfg.holder.$target.parent().before(this.$target);
+    }
+
+
     this.$target.on('click', '.' + this.actionClassName, function (e) {
         if (e.target && e.target.getAttribute('data-key')) {
             var actionKey = e.target.getAttribute('data-key'),
@@ -569,6 +585,12 @@ var DecalActionBar = function ($target, givenCfg) {
     });
 };
 DecalActionBar.prototype = {
+    hide: function () {
+        this.$target.addClass(this.hiddenclassName);
+    },
+    show: function () {
+        this.$target.removeClass(this.hiddenclassName);
+    },
     render: function () {
         var frag = document.createDocumentFragment(),
             i,
