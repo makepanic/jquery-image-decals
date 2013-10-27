@@ -83,7 +83,8 @@ DecalComposer.prototype = {
         this.scale.width = this.img.width / this.cfg.domain.width;
         this.scale.height = this.img.height / this.cfg.domain.height;
 
-        this.renderer = new DecalCanvasRenderer(this.$target, this.img);
+        this.renderer = new DecalCanvasRenderer(this.$target, this.img,
+            (!this.cfg.resizable && !this.cfg.clickable && !this.cfg.resizable));
 
         // create decalHolder container
         this.renderer.$target.parent().find('.image-composer-canvas').append(elImgDecals);
@@ -607,12 +608,12 @@ DecalActionBar.prototype = {
     }
 };
 
-var DecalCanvasRenderer = function ($target, compImg) {
+var DecalCanvasRenderer = function ($target, compImg, noInteraction) {
     if (!compImg instanceof Img) {
         throw 'need Img instance to render';
     }
 
-    $target.wrap('<div class="image-composer-wrap"></div>');
+    $target.wrap('<div class="image-composer-wrap' + (noInteraction ? 'image-no-interaction' : '') + '"></div>');
 
     this.$target = $target;
     this.compImg = compImg;
