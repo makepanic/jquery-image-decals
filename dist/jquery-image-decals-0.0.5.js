@@ -613,7 +613,7 @@ var DecalCanvasRenderer = function ($target, compImg, noInteraction) {
         throw 'need Img instance to render';
     }
 
-    $target.wrap('<div class="image-composer-wrap' + (noInteraction ? 'image-no-interaction' : '') + '"></div>');
+    $target.wrap('<div class="image-composer-wrap' + (noInteraction ? ' image-no-interaction' : '') + '"></div>');
 
     this.$target = $target;
     this.compImg = compImg;
