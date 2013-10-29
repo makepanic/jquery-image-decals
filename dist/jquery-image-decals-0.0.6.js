@@ -298,33 +298,40 @@ DecalHolder.prototype = {
         }
     },
     _applyResizeable: function () {
-        var that = this;
+        var that = this,
+            stopFn = function (e, ui) {
+            // once resize is done, update decal dimension
+            var uid = e.target.getAttribute('data-uid');
 
-        this.$target.find('.resizable').resizable({
+            that.itemsMap[uid].width = ui.size.width;
+            that.itemsMap[uid].height = ui.size.height;
+
+            that.items.every(function (item) {
+                var found = false;
+
+                if (item.uid === uid) {
+                    item.width = ui.size.width;
+                    item.height = ui.size.height;
+                    found = true;
+                }
+
+                return !found;
+            });
+        };
+
+        this.$target.find('.resizable-no-aspect-ratio').resizable({
+            // limit movement to parent container
+            containment: 'parent',
+            stop: stopFn
+        });
+        this.$target.find('.resizable-aspect-ratio').resizable({
             // limit movement to parent container
             containment: 'parent',
             aspectRatio: true,
-
-            stop: function (e, ui) {
-                // once resize is done, update decal dimension
-                var uid = e.target.getAttribute('data-uid');
-
-                that.itemsMap[uid].width = ui.size.width;
-                that.itemsMap[uid].height = ui.size.height;
-
-                that.items.every(function (item) {
-                    var found = false;
-
-                    if (item.uid === uid) {
-                        item.width = ui.size.width;
-                        item.height = ui.size.height;
-                        found = true;
-                    }
-
-                    return !found;
-                });
-            }
+            stop: stopFn
         });
+
+        console.log(this.$target.find('.resize-w-aspect-ratio'));
     },
     _applyDraggable: function () {
         var that = this;
@@ -372,6 +379,8 @@ DecalHolder.prototype = {
         if (item.src) {
             span.style.backgroundImage = 'url(' + item.src + ')';
         }
+
+        span.className += item.resizeAspectRatio ? ' resizable-aspect-ratio' : ' resizable-no-aspect-ratio'
 
         if (this.scaleDecalDimension) {
             span.style.width = intFn(this.scale.width * item.width) + 'px';
@@ -449,7 +458,8 @@ var Decal = function (cfg) {
         left: 0,
         top: 0,
         title: '',
-        className: undefined
+        className: undefined,
+        resizeAspectRatio: false
     };
     cfg = jQuery.extend({}, defaultDecal, cfg);
 
@@ -462,6 +472,7 @@ var Decal = function (cfg) {
     this.title = cfg.title;
     this.uid = uid();
     this.className = cfg.className;
+    this.resizeAspectRatio = cfg.resizeAspectRatio;
 };
 
 

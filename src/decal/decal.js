@@ -10,7 +10,8 @@ var Decal = function (cfg) {
         left: 0,
         top: 0,
         title: '',
-        className: undefined
+        className: undefined,
+        resizeAspectRatio: false
     };
     cfg = jQuery.extend({}, defaultDecal, cfg);
 
@@ -23,6 +24,7 @@ var Decal = function (cfg) {
     this.title = cfg.title;
     this.uid = uid();
     this.className = cfg.className;
+    this.resizeAspectRatio = cfg.resizeAspectRatio;
 };
 
 require('./toObject');
