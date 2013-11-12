@@ -8,6 +8,7 @@ var DecalComposer = function ($target, opts) {
             showActions: false,
             actionTemplate: undefined,
 
+            useImageSrcDimension: true,
             clickUnfocus: false,
             resizable: false,
             showPalette: false,
@@ -34,7 +35,7 @@ var DecalComposer = function ($target, opts) {
         height: 1
     };
 
-    this.img.dimension(function () {
+    this.img.dimension(this.cfg.useImageSrcDimension, function () {
         that.init();
     });
 
@@ -43,9 +44,13 @@ var DecalComposer = function ($target, opts) {
 };
 DecalComposer.prototype = {
     toJSON: function () {
-        var obj = this.decalHolder.toObject();
+        var obj = this.decalHolder.toObject(),
+            config = {
+                decals: obj,
+                domain: this.cfg.domain
+            };
 
-        return JSON.stringify(obj);
+        return JSON.stringify(config);
     },
     init: function () {
         var that = this,

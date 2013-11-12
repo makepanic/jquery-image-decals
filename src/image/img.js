@@ -19,6 +19,7 @@ var Img = function ($el) {
         this.height = $el.height();
         this.src = src;
         this.img = undefined;
+        this.$el = $el;
 
     } else {
         throw 'jquery-image-composer requires an image or element with background image to work';

@@ -36,6 +36,7 @@ var DecalComposer = function ($target, opts) {
             showActions: false,
             actionTemplate: undefined,
 
+            useImageSrcDimension: true,
             clickUnfocus: false,
             resizable: false,
             showPalette: false,
@@ -62,7 +63,7 @@ var DecalComposer = function ($target, opts) {
         height: 1
     };
 
-    this.img.dimension(function () {
+    this.img.dimension(this.cfg.useImageSrcDimension, function () {
         that.init();
     });
 
@@ -71,9 +72,13 @@ var DecalComposer = function ($target, opts) {
 };
 DecalComposer.prototype = {
     toJSON: function () {
-        var obj = this.decalHolder.toObject();
+        var obj = this.decalHolder.toObject(),
+            config = {
+                decals: obj,
+                domain: this.cfg.domain
+            };
 
-        return JSON.stringify(obj);
+        return JSON.stringify(config);
     },
     init: function () {
         var that = this,
@@ -191,6 +196,7 @@ var Img = function ($el) {
         this.height = $el.height();
         this.src = src;
         this.img = undefined;
+        this.$el = $el;
 
     } else {
         throw 'jquery-image-composer requires an image or element with background image to work';
@@ -204,17 +210,22 @@ var Img = function ($el) {
  CompImg
  */
 
-Img.prototype.dimension = function (done) {
+Img.prototype.dimension = function (useSrcDimension, done) {
     'use strict';
 
     var img,
         that = this,
-        imageLoaded = function () {
+        imageLoaded,
+        doneIsFn = !!(Object.prototype.toString.call(done) === '[object Function]');
 
+    if (useSrcDimension) {
+
+        imageLoaded = function () {
+            // this represents the HTMLImageElement
             that.width = this.width;
             that.height = this.height;
 
-            if (Object.prototype.toString.call(done) === '[object Function]') {
+            if (doneIsFn) {
                 done({
                     x: this.width,
                     y: this.height
@@ -222,11 +233,31 @@ Img.prototype.dimension = function (done) {
             }
         };
 
-    img = new Image();
-    img.onload = imageLoaded;
-    img.src = this.src;
+        img = new Image();
+        img.onload = imageLoaded;
+        img.src = this.src;
 
-    this.img = img;
+        this.img = img;
+
+    } else {
+
+        this.width = this.$el.width();
+        this.height = this.$el.height();
+
+        if (doneIsFn) {
+            img = new Image();
+            img.onload = function () {
+                done({
+                    x: that.width,
+                    y: that.height
+                })
+            };
+            img.src = this.src;
+            this.img = img;
+        }
+
+    }
+
 };
 
 var DecalHolder = function ($target, cfg) {
