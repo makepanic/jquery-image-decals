@@ -216,7 +216,7 @@ Img.prototype.dimension = function (useSrcDimension, done) {
     var img,
         that = this,
         imageLoaded,
-        doneIsFn = !!(Object.prototype.toString.call(done) === '[object Function]');
+        doneIsFn = (Object.prototype.toString.call(done) === '[object Function]');
 
     if (useSrcDimension) {
 
@@ -369,11 +369,30 @@ DecalHolder.prototype = {
 
         this.$target.find('.draggable').draggable({
             // limit movement to parent container
-            containment: 'parent',
+//            containment: 'parent',
+
+            drag: function(ev, ui){
+                // check if element is outside of holder bounds
+                if (that._itemOutsideHolder({
+                    left: ui.position.left,
+                    top: ui.position.top,
+                    width: ev.target.clientWidth,
+                    height: ev.target.clientHeight
+                })){
+                    // add indicator classname
+                    $(ev.target).addClass('decal-out');
+                    that.$target.addClass('has-decal-out');
+                } else if (~ev.target.className.indexOf('decal-out')) {
+                    // is inside bounds, but has classname, remove
+                    $(ev.target).removeClass('decal-out');
+                    that.$target.removeClass('has-decal-out');
+                }
+            },
 
             stop: function (e, ui) {
                 // once drag is done, update decal positions
-                var uid = e.target.getAttribute('data-uid');
+                var uid = e.target.getAttribute('data-uid'),
+                    foundItem;
 
                 that.itemsMap[uid].left = ui.position.left;
                 that.itemsMap[uid].top = ui.position.top;
@@ -384,13 +403,42 @@ DecalHolder.prototype = {
                     if (item.uid === uid) {
                         item.left = ui.position.left;
                         item.top = ui.position.top;
+                        foundItem = item;
                         found = true;
                     }
 
                     return !found;
                 });
+
+                // check if element is outside canvas
+                if (foundItem) {
+                    if (that._itemOutsideHolder(foundItem)){
+                        that.removeDecal(foundItem);
+                    }
+                } else {
+                    console.error('y u no found item?', uid);
+                }
             }
         });
+    },
+    _itemOutsideHolder: function(item){
+        var isOutside,
+            centerPoint = {
+                x: item.left + item.width / 2,
+                y: item.top + item.height / 2
+            };
+
+        isOutside =
+            // left boundary
+            centerPoint.x < 0 ||
+            // upper boundary
+            centerPoint.y < 0 ||
+            // right boundary
+            centerPoint.x > this.cfg.dimension.height ||
+            // lower boundary
+            centerPoint.y > this.cfg.dimension.width;
+
+        return isOutside;
     },
     _createElement: function (item) {
         var span = document.createElement('span'),
@@ -507,7 +555,7 @@ var Decal = function (cfg) {
 };
 
 
-DecalHolder.prototype.toObject = function (obj) {
+DecalHolder.prototype.toObject = function () {
     var storage = [],
         data,
         $obj;
@@ -588,7 +636,7 @@ DecalPalette.prototype = {
             span.style.width = item.width + 'px';
             span.style.height = item.height + 'px';
 
-            wrapper.appendChild(span)
+            wrapper.appendChild(span);
             frag.appendChild(wrapper);
         }
 
