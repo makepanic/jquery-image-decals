@@ -1,4 +1,4 @@
-DecalHolder.prototype.toObject = function (obj) {
+DecalHolder.prototype.toObject = function () {
     var storage = [],
         data,
         $obj;

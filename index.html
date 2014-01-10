@@ -8,7 +8,7 @@
     <!-- jqueryui -->
     <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
-    <script type="text/javascript" src="dist/jquery-image-decals-0.0.7.js"></script>
+    <script type="text/javascript" src="dist/jquery-image-decals-0.0.8.js"></script>
 
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
     <style type="text/css">
@@ -29,6 +29,12 @@
             display: inline-block;
             background: transparent;
             background-size: 100% 100%;
+            opacity: 1;
+            -webkit-transition: opacity .2s;
+            -moz-transition: opacity .2s;
+            -ms-transition: opacity .2s;
+            -o-transition: opacity .2s;
+            transition: opacity .2s;
         }
         .image-composer-decals .draggable{
             cursor: move;
@@ -62,6 +68,11 @@
         .first{
             width: 600px;
             height: 600px;
+        }
+        .decal-out{
+            opacity: .5 !important;
+            background: red url('./img/cross.png') no-repeat center center !important;
+            background-size: auto;
         }
     </style>
 </head>

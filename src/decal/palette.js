@@ -53,7 +53,7 @@ DecalPalette.prototype = {
             span.style.width = item.width + 'px';
             span.style.height = item.height + 'px';
 
-            wrapper.appendChild(span)
+            wrapper.appendChild(span);
             frag.appendChild(wrapper);
         }
 

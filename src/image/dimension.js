@@ -10,7 +10,7 @@ Img.prototype.dimension = function (useSrcDimension, done) {
     var img,
         that = this,
         imageLoaded,
-        doneIsFn = !!(Object.prototype.toString.call(done) === '[object Function]');
+        doneIsFn = (Object.prototype.toString.call(done) === '[object Function]');
 
     if (useSrcDimension) {
 
