@@ -380,11 +380,11 @@ DecalHolder.prototype = {
                     height: ev.target.clientHeight
                 })){
                     // add indicator classname
-                    $(ev.target).addClass('decal-out');
+                    jQuery(ev.target).addClass('decal-out');
                     that.$target.addClass('has-decal-out');
                 } else if (~ev.target.className.indexOf('decal-out')) {
                     // is inside bounds, but has classname, remove
-                    $(ev.target).removeClass('decal-out');
+                    jQuery(ev.target).removeClass('decal-out');
                     that.$target.removeClass('has-decal-out');
                 }
             },
