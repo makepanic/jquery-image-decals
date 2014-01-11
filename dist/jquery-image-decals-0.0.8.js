@@ -382,6 +382,11 @@ DecalHolder.prototype = {
             // limit movement to parent container
 //            containment: 'parent',
 
+            start: function(){
+                // add container drag class indicator
+                that.$target.addClass('decal-dragged');
+            },
+
             drag: function(ev, ui){
                 // check if element is outside of holder bounds
                 if (that._itemOutsideHolder({
@@ -404,6 +409,9 @@ DecalHolder.prototype = {
                 // once drag is done, update decal positions
                 var uid = e.target.getAttribute('data-uid'),
                     foundItem;
+
+                // remove container drag class indicator
+                that.$target.removeClass('decal-dragged');
 
                 that.itemsMap[uid].left = ui.position.left;
                 that.itemsMap[uid].top = ui.position.top;
