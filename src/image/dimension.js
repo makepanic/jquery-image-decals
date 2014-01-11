@@ -1,8 +1,4 @@
-/*global
- $,
- Image,
- CompImg
- */
+/*global Img */
 
 Img.prototype.dimension = function (useSrcDimension, done) {
     'use strict';
@@ -44,7 +40,7 @@ Img.prototype.dimension = function (useSrcDimension, done) {
                 done({
                     x: that.width,
                     y: that.height
-                })
+                });
             };
             img.src = this.src;
             this.img = img;

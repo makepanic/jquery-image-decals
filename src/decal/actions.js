@@ -1,3 +1,4 @@
+/*global jQuery, Events */
 var DecalActionBar = function ($target, givenCfg) {
     var that = this,
         defaultCfg = {
@@ -55,7 +56,6 @@ DecalActionBar.prototype = {
     },
     render: function () {
         var frag = document.createDocumentFragment(),
-            i,
             el,
             actionIndex,
             action;

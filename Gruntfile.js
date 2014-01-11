@@ -30,15 +30,29 @@ module.exports = function (grunt) {
                     'dist/<%= pkg.name %>-<%= pkg.version %>.min.js': ['dist/<%= pkg.name %>-<%= pkg.version %>.js']
                 }
             }
-        }
+        },
+
+        eslint: {
+            target: [
+                'src/**/*.js',
+                '!src/bootstrap.js',
+                '!src/vendor/**/*.js',
+                '!src/plugin-wrapper.js',
+            ],
+            options: {
+                config: 'eslint.json'
+            }
+        },
     });
 
     grunt.loadNpmTasks('grunt-neuter');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-eslint');
 
     // Default task(s).
-    grunt.registerTask('default', ['neuter', 'uglify']);
-    grunt.registerTask('dev', ['neuter', 'uglify', 'watch']);
+    grunt.registerTask('default', ['eslint', 'neuter', 'uglify']);
+    grunt.registerTask('ci', ['eslint', 'neuter', 'uglify']);
+    grunt.registerTask('dev', ['eslint', 'neuter', 'uglify', 'watch']);
 
 };

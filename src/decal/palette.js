@@ -1,3 +1,4 @@
+/*global Decal, Events */
 var DecalPalette = function ($target, itemsMap) {
     var that = this,
         item;
@@ -59,4 +60,4 @@ DecalPalette.prototype = {
 
         this.$target.append(frag);
     }
-}
+};

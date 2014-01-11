@@ -1,3 +1,13 @@
+/*global
+    Img,
+    jQuery,
+    Events,
+    Decal,
+    DecalCanvasRenderer,
+    DecalHolder,
+    DecalPalette,
+    DecalActionBar
+*/
 var DecalComposer = function ($target, opts) {
 
     var that = this,

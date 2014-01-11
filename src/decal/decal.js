@@ -1,3 +1,5 @@
+/*global require, jQuery, uid */
+
 require('./holder');
 
 var Decal = function (cfg) {

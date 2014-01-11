@@ -1,3 +1,4 @@
+/*global require, Img */
 var DecalCanvasRenderer = function ($target, compImg, noInteraction) {
     if (!compImg instanceof Img) {
         throw 'need Img instance to render';
@@ -24,4 +25,4 @@ DecalCanvasRenderer.prototype.place = function () {
     // place canvas for image
 
     this.$target.after(imgContainer);
-}
+};

@@ -1,3 +1,4 @@
+/*global jQuery, Events, console */
 var DecalHolder = function ($target, cfg) {
     'use strict';
 
@@ -23,7 +24,7 @@ var DecalHolder = function ($target, cfg) {
             if (e.target.className === 'image-composer-decals') {
                 that.removeFocus();
             }
-        })
+        });
     }
 
     if (this.cfg.clickable) {
@@ -197,7 +198,7 @@ DecalHolder.prototype = {
             span.style.backgroundImage = 'url(' + item.src + ')';
         }
 
-        span.className += item.resizeAspectRatio ? ' resizable-aspect-ratio' : ' resizable-no-aspect-ratio'
+        span.className += item.resizeAspectRatio ? ' resizable-aspect-ratio' : ' resizable-no-aspect-ratio';
 
         if (this.scaleDecalDimension) {
             span.style.width = intFn(this.scale.width * item.width) + 'px';

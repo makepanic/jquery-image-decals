@@ -1,3 +1,4 @@
+/*global require */
 var Img = function ($el) {
     'use strict';
 

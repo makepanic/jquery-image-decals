@@ -1,12 +1,9 @@
+/*global DecalHolder */
 DecalHolder.prototype.toObject = function () {
     var storage = [],
-        data,
-        $obj;
+        data;
 
     this.items.forEach(function (item) {
-
-        $obj = jQuery('[data-uid=' + item.uid + ']');
-
         data = {
             key: item.key,
 
