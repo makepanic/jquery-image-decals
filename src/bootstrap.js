@@ -1,4 +1,8 @@
 var _lastId = 0,
+    /**
+     * Unique identifier generator
+     * @returns {String} unique String
+     */
     uid = function () {
         _lastId += 1;
         return 'image-composer-uid-' + _lastId;

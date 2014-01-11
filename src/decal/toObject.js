@@ -1,4 +1,9 @@
 /*global DecalHolder */
+
+/**
+ * basic serialization method
+ * @returns {Array}
+ */
 DecalHolder.prototype.toObject = function () {
     var storage = [],
         data;

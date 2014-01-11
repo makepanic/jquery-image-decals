@@ -1,4 +1,10 @@
 /*global require */
+
+/**
+ * Object that represents an image that is an HTMLElement image or an element with a background-image
+ * @param $el
+ * @constructor
+ */
 var Img = function ($el) {
     'use strict';
 

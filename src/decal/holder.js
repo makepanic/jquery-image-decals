@@ -1,4 +1,11 @@
 /*global jQuery, Events, console */
+
+/**
+ * wrapper that contains all placed decals
+ * @param $target
+ * @param cfg
+ * @constructor
+ */
 var DecalHolder = function ($target, cfg) {
     'use strict';
 
@@ -43,6 +50,9 @@ var DecalHolder = function ($target, cfg) {
     }
 };
 DecalHolder.prototype = {
+    /**
+     * renders all decals
+     */
     render: function () {
         'use strict';
 
@@ -51,7 +61,6 @@ DecalHolder.prototype = {
             span;
 
         this.items.forEach(function (item) {
-
             // basic item element bootstrap
             span = that._createElement(item);
             frag.appendChild(span);
@@ -67,8 +76,17 @@ DecalHolder.prototype = {
             this._applyResizeable();
         }
     },
+    /**
+     * applies jqueryui resizeable to all decals that have 'resizable-aspect-ratio' or 'resizable-no-aspect-ratio' for className
+     * @private
+     */
     _applyResizeable: function () {
         var that = this,
+            /**
+             * Function that is called once the resize stopped. It updates the dimension of the resized decal.
+             * @param e
+             * @param ui
+             */
             stopFn = function (e, ui) {
             // once resize is done, update decal dimension
             var uid = e.target.getAttribute('data-uid');
@@ -76,10 +94,12 @@ DecalHolder.prototype = {
             that.itemsMap[uid].width = ui.size.width;
             that.itemsMap[uid].height = ui.size.height;
 
+            // loop through each item and check if uid equals element uid
             that.items.every(function (item) {
                 var found = false;
 
                 if (item.uid === uid) {
+                    // update found item dimension
                     item.width = ui.size.width;
                     item.height = ui.size.height;
                     found = true;
@@ -89,32 +109,31 @@ DecalHolder.prototype = {
             });
         };
 
+        // apply resizable without aspectRatio
         this.$target.find('.resizable-no-aspect-ratio').resizable({
-            // limit movement to parent container
             containment: 'parent',
             stop: stopFn
         });
+
+        // apply resizable with aspectRatio
         this.$target.find('.resizable-aspect-ratio').resizable({
-            // limit movement to parent container
             containment: 'parent',
             aspectRatio: true,
             stop: stopFn
         });
-
-        console.log(this.$target.find('.resize-w-aspect-ratio'));
     },
+    /**
+     * Applies jqueryui draggable to all elements that have the draggable className
+     * @private
+     */
     _applyDraggable: function () {
         var that = this;
 
         this.$target.find('.draggable').draggable({
-            // limit movement to parent container
-//            containment: 'parent',
-
             start: function(){
                 // add container drag class indicator
                 that.$target.addClass('decal-dragged');
             },
-
             drag: function(ev, ui){
                 // check if element is outside of holder bounds
                 if (that._itemOutsideHolder({
@@ -132,7 +151,6 @@ DecalHolder.prototype = {
                     that.$target.removeClass('has-decal-out');
                 }
             },
-
             stop: function (e, ui) {
                 // once drag is done, update decal positions
                 var uid = e.target.getAttribute('data-uid'),
@@ -168,6 +186,12 @@ DecalHolder.prototype = {
             }
         });
     },
+    /**
+     * Function that tests if the center of a decal is outside the container
+     * @param item
+     * @returns {boolean} if the element is outside
+     * @private
+     */
     _itemOutsideHolder: function(item){
         var isOutside,
             centerPoint = {
@@ -187,6 +211,12 @@ DecalHolder.prototype = {
 
         return isOutside;
     },
+    /**
+     * Creates a span HTMLElement from a decal object
+     * @param item
+     * @returns {HTMLElement}
+     * @private
+     */
     _createElement: function (item) {
         var span = document.createElement('span'),
             intFn = Math.floor;
@@ -220,11 +250,17 @@ DecalHolder.prototype = {
         span.style.top = intFn(this.scale.height * item.top) + 'px';
         return span;
     },
+    /**
+     * renders decals from a given start index
+     * @param from
+     */
     renderOne: function (from) {
         var item,
             span;
 
+        // check if from is a number
         from = Object.prototype.toString.call(from) === '[object Number]' ? from : -1;
+
         if (from !== -1) {
             item = this.items[from];
             span = this._createElement(item);
@@ -238,6 +274,11 @@ DecalHolder.prototype = {
             }
         }
     },
+    /**
+     * Adds a decal and gives option to render it directly using the renderOne function
+     * @param decal
+     * @param skipRender if true doesnt render from the added decal
+     */
     addDecal: function (decal, skipRender) {
         this.items.push(decal);
         this.itemsMap[decal.uid] = decal;
@@ -246,12 +287,19 @@ DecalHolder.prototype = {
             this.renderOne(this.items.length - 1);
         }
     },
+    /**
+     * Removes focus className from all decals that have the focus className
+     */
     removeFocus: function () {
         this.$target.find('.image-composer-decal-selected').removeClass('image-composer-decal-selected');
         this.$target.trigger(Events.decalItemFocusChanged, {
             focus: false
         });
     },
+    /**
+     * removes a decal
+     * @param decal
+     */
     removeDecal: function (decal) {
         var removeIndex = -1,
             found = false;
@@ -267,8 +315,11 @@ DecalHolder.prototype = {
         });
 
         if (removeIndex !== -1 && found) {
+            // remove from itemMap
             delete this.itemsMap[decal.uid];
+            // remove from items array
             this.items.splice(removeIndex, 1);
+            // remove dom element
             this.$target.find('[data-uid=' + decal.uid + ']').remove();
         }
     }

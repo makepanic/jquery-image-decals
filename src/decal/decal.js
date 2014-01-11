@@ -2,6 +2,11 @@
 
 require('./holder');
 
+/**
+ * Model that represents a decal
+ * @param cfg
+ * @constructor
+ */
 var Decal = function (cfg) {
 
     var defaultDecal = {

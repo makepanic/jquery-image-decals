@@ -3,6 +3,11 @@
  require
  */
 
+/**
+ * jQuery plugin registration
+ * @param options
+ * @returns {jQuery.fn}
+ */
 jQuery.fn.imageDecals = function (options) {
     'use strict';
 
@@ -11,8 +16,14 @@ jQuery.fn.imageDecals = function (options) {
         },
         settings = jQuery.extend({}, defaults, options);
 
+    // load bootstrapping code (which loads the rest of the application)
+
 
 var _lastId = 0,
+    /**
+     * Unique identifier generator
+     * @returns {String} unique String
+     */
     uid = function () {
         _lastId += 1;
         return 'image-composer-uid-' + _lastId;
@@ -36,6 +47,13 @@ var Events = {
     DecalPalette,
     DecalActionBar
 */
+
+/**
+ * basically initialization of the complete plugin using an jQuery element and a config object
+ * @param {*} $target
+ * @param {Object} opts
+ * @constructor
+ */
 var DecalComposer = function ($target, opts) {
 
     var that = this,
@@ -67,20 +85,27 @@ var DecalComposer = function ($target, opts) {
     this.selectedDecal = null;
     this.img = new Img($target);
 
+    // create config by merging defaults and given options
     this.cfg = jQuery.extend({}, defaults, opts);
     this.scale = {
         width: 1,
         height: 1
     };
 
+    // load dimension and initialize decalComposer
     this.img.dimension(this.cfg.useImageSrcDimension, function () {
         that.init();
     });
 
+    // more variable setting
     this.events = this.cfg.events;
     this.$target = $target;
 };
 DecalComposer.prototype = {
+    /**
+     * Function that generates JSON with each decal object and the domain. This is used to store the current composition in a database.
+     * @returns {*}
+     */
     toJSON: function () {
         var obj = this.decalHolder.toObject(),
             config = {
@@ -90,21 +115,27 @@ DecalComposer.prototype = {
 
         return JSON.stringify(config);
     },
+    /**
+     * initializes everything
+     */
     init: function () {
         var that = this,
             decalObj,
             elImgDecals = jQuery('<div class="image-composer-decals"></div>'),
             elPalette = jQuery('<div class="image-composer-palette"></div>');
 
+        // calculate scale using the image dimension and stored domain
         this.scale.width = this.img.width / this.cfg.domain.width;
         this.scale.height = this.img.height / this.cfg.domain.height;
 
+        // create DecalCanvasRenderer
         this.renderer = new DecalCanvasRenderer(this.$target, this.img,
             (!this.cfg.resizable && !this.cfg.clickable && !this.cfg.resizable));
 
         // create decalHolder container
         this.renderer.$target.parent().find('.image-composer-canvas').append(elImgDecals);
 
+        // cerate DecalHolder
         this.decalHolder = new DecalHolder(elImgDecals, {
             clickUnfocus: this.cfg.clickUnfocus,
             resizable: this.cfg.resizable,
@@ -120,6 +151,7 @@ DecalComposer.prototype = {
             items: []
         });
 
+        // initialize event listener for decal item clicked
         this.decalHolder.$target.on(Events.decalItemClicked, function (e, data) {
             that.selectedDecal = data.decal;
             if (that.cfg.showActions) {
@@ -127,6 +159,7 @@ DecalComposer.prototype = {
             }
             that.events.onDecalClicked.call(e.target, e, data.decal);
         });
+        // initialize event listener for decal item focus changed
         this.decalHolder.$target.on(Events.decalItemFocusChanged, function (e, data) {
             if (data.focus === false) {
                 that.selectedDecal = null;
@@ -137,8 +170,8 @@ DecalComposer.prototype = {
             }
         });
 
-        // create palette container
         if (this.cfg.showPalette) {
+            // create palette container
             this.renderer.$target.parent().append(elPalette);
             this.decalPalette = new DecalPalette(elPalette, this.cfg.decals);
             this.decalPalette.$target.on(Events.decalPaletteItemClicked, function (e, data) {
@@ -147,21 +180,22 @@ DecalComposer.prototype = {
         }
 
         if (this.cfg.showActions) {
-            // decal-action-clicked
+            // create actionbar
             this.actionBar = new DecalActionBar(this.cfg.actionBar, {
                 actions: this.cfg.actions,
                 actionTemplate: this.cfg.actionTemplate,
                 holder: this.decalHolder
             });
+            // initialize event listener for decal action clicked
             this.actionBar.$target.on(Events.decalActionClicked, function (e, data) {
                 var action = data.action;
                 action.trigger(that.selectedDecal, e, that.decalHolder);
             });
         }
 
+        // restore decals from given data
         this.cfg.data.forEach(function (item) {
             // clone cfg object
-
             decalObj = jQuery.extend(true, {}, that.cfg.decals[item.key]);
             decalObj.width = item.width;
             decalObj.height = item.height;
@@ -172,12 +206,15 @@ DecalComposer.prototype = {
             that.decalHolder.addDecal(new Decal(decalObj), true);
         });
 
+        // render decal holder
         this.decalHolder.render();
 
         if (this.cfg.showPalette) {
+            // render palette
             this.decalPalette.render();
         }
         if (this.cfg.showActions) {
+            // render actionbar and hide it
             this.actionBar.hide();
             this.actionBar.render();
         }
@@ -186,6 +223,12 @@ DecalComposer.prototype = {
 };
 
 /*global require */
+
+/**
+ * Object that represents an image that is an HTMLElement image or an element with a background-image
+ * @param $el
+ * @constructor
+ */
 var Img = function ($el) {
     'use strict';
 
@@ -217,6 +260,11 @@ var Img = function ($el) {
 
 /*global Img */
 
+/**
+ * Function to calculate dimension of an image
+ * @param {Boolean} useSrcDimension loads the image and uses the loaded ressource dimension
+ * @param {Function} done callback if it calculated the dimension
+ */
 Img.prototype.dimension = function (useSrcDimension, done) {
     'use strict';
 
@@ -226,7 +274,7 @@ Img.prototype.dimension = function (useSrcDimension, done) {
         doneIsFn = (Object.prototype.toString.call(done) === '[object Function]');
 
     if (useSrcDimension) {
-
+        // load dimension based on src
         imageLoaded = function () {
             // this represents the HTMLImageElement
             that.width = this.width;
@@ -247,7 +295,7 @@ Img.prototype.dimension = function (useSrcDimension, done) {
         this.img = img;
 
     } else {
-
+        // load dimension based on existing dom element
         this.width = this.$el.width();
         this.height = this.$el.height();
 
@@ -271,6 +319,13 @@ Img.prototype.dimension = function (useSrcDimension, done) {
 
 
 /*global jQuery, Events, console */
+
+/**
+ * wrapper that contains all placed decals
+ * @param $target
+ * @param cfg
+ * @constructor
+ */
 var DecalHolder = function ($target, cfg) {
     'use strict';
 
@@ -315,6 +370,9 @@ var DecalHolder = function ($target, cfg) {
     }
 };
 DecalHolder.prototype = {
+    /**
+     * renders all decals
+     */
     render: function () {
         'use strict';
 
@@ -323,7 +381,6 @@ DecalHolder.prototype = {
             span;
 
         this.items.forEach(function (item) {
-
             // basic item element bootstrap
             span = that._createElement(item);
             frag.appendChild(span);
@@ -339,8 +396,17 @@ DecalHolder.prototype = {
             this._applyResizeable();
         }
     },
+    /**
+     * applies jqueryui resizeable to all decals that have 'resizable-aspect-ratio' or 'resizable-no-aspect-ratio' for className
+     * @private
+     */
     _applyResizeable: function () {
         var that = this,
+            /**
+             * Function that is called once the resize stopped. It updates the dimension of the resized decal.
+             * @param e
+             * @param ui
+             */
             stopFn = function (e, ui) {
             // once resize is done, update decal dimension
             var uid = e.target.getAttribute('data-uid');
@@ -348,10 +414,12 @@ DecalHolder.prototype = {
             that.itemsMap[uid].width = ui.size.width;
             that.itemsMap[uid].height = ui.size.height;
 
+            // loop through each item and check if uid equals element uid
             that.items.every(function (item) {
                 var found = false;
 
                 if (item.uid === uid) {
+                    // update found item dimension
                     item.width = ui.size.width;
                     item.height = ui.size.height;
                     found = true;
@@ -361,32 +429,31 @@ DecalHolder.prototype = {
             });
         };
 
+        // apply resizable without aspectRatio
         this.$target.find('.resizable-no-aspect-ratio').resizable({
-            // limit movement to parent container
             containment: 'parent',
             stop: stopFn
         });
+
+        // apply resizable with aspectRatio
         this.$target.find('.resizable-aspect-ratio').resizable({
-            // limit movement to parent container
             containment: 'parent',
             aspectRatio: true,
             stop: stopFn
         });
-
-        console.log(this.$target.find('.resize-w-aspect-ratio'));
     },
+    /**
+     * Applies jqueryui draggable to all elements that have the draggable className
+     * @private
+     */
     _applyDraggable: function () {
         var that = this;
 
         this.$target.find('.draggable').draggable({
-            // limit movement to parent container
-//            containment: 'parent',
-
             start: function(){
                 // add container drag class indicator
                 that.$target.addClass('decal-dragged');
             },
-
             drag: function(ev, ui){
                 // check if element is outside of holder bounds
                 if (that._itemOutsideHolder({
@@ -404,7 +471,6 @@ DecalHolder.prototype = {
                     that.$target.removeClass('has-decal-out');
                 }
             },
-
             stop: function (e, ui) {
                 // once drag is done, update decal positions
                 var uid = e.target.getAttribute('data-uid'),
@@ -440,6 +506,12 @@ DecalHolder.prototype = {
             }
         });
     },
+    /**
+     * Function that tests if the center of a decal is outside the container
+     * @param item
+     * @returns {boolean} if the element is outside
+     * @private
+     */
     _itemOutsideHolder: function(item){
         var isOutside,
             centerPoint = {
@@ -459,6 +531,12 @@ DecalHolder.prototype = {
 
         return isOutside;
     },
+    /**
+     * Creates a span HTMLElement from a decal object
+     * @param item
+     * @returns {HTMLElement}
+     * @private
+     */
     _createElement: function (item) {
         var span = document.createElement('span'),
             intFn = Math.floor;
@@ -492,11 +570,17 @@ DecalHolder.prototype = {
         span.style.top = intFn(this.scale.height * item.top) + 'px';
         return span;
     },
+    /**
+     * renders decals from a given start index
+     * @param from
+     */
     renderOne: function (from) {
         var item,
             span;
 
+        // check if from is a number
         from = Object.prototype.toString.call(from) === '[object Number]' ? from : -1;
+
         if (from !== -1) {
             item = this.items[from];
             span = this._createElement(item);
@@ -510,6 +594,11 @@ DecalHolder.prototype = {
             }
         }
     },
+    /**
+     * Adds a decal and gives option to render it directly using the renderOne function
+     * @param decal
+     * @param skipRender if true doesnt render from the added decal
+     */
     addDecal: function (decal, skipRender) {
         this.items.push(decal);
         this.itemsMap[decal.uid] = decal;
@@ -518,12 +607,19 @@ DecalHolder.prototype = {
             this.renderOne(this.items.length - 1);
         }
     },
+    /**
+     * Removes focus className from all decals that have the focus className
+     */
     removeFocus: function () {
         this.$target.find('.image-composer-decal-selected').removeClass('image-composer-decal-selected');
         this.$target.trigger(Events.decalItemFocusChanged, {
             focus: false
         });
     },
+    /**
+     * removes a decal
+     * @param decal
+     */
     removeDecal: function (decal) {
         var removeIndex = -1,
             found = false;
@@ -539,13 +635,21 @@ DecalHolder.prototype = {
         });
 
         if (removeIndex !== -1 && found) {
+            // remove from itemMap
             delete this.itemsMap[decal.uid];
+            // remove from items array
             this.items.splice(removeIndex, 1);
+            // remove dom element
             this.$target.find('[data-uid=' + decal.uid + ']').remove();
         }
     }
 };
 
+/**
+ * Model that represents a decal
+ * @param cfg
+ * @constructor
+ */
 var Decal = function (cfg) {
 
     var defaultDecal = {
@@ -575,6 +679,11 @@ var Decal = function (cfg) {
 
 
 /*global DecalHolder */
+
+/**
+ * basic serialization method
+ * @returns {Array}
+ */
 DecalHolder.prototype.toObject = function () {
     var storage = [],
         data;
@@ -598,6 +707,13 @@ DecalHolder.prototype.toObject = function () {
 
 
 /*global Decal, Events */
+
+/**
+ * Palette with all available decals
+ * @param $target
+ * @param itemsMap
+ * @constructor
+ */
 var DecalPalette = function ($target, itemsMap) {
     var that = this,
         item;
@@ -605,6 +721,7 @@ var DecalPalette = function ($target, itemsMap) {
     this.items = [];
     this.itemsMap = itemsMap;
 
+    // fill items array with newly created Decal objects based on each item
     for (item in this.itemsMap) {
         if (this.itemsMap.hasOwnProperty(item)) {
             this.items.push(new Decal(this.itemsMap[item]));
@@ -612,11 +729,14 @@ var DecalPalette = function ($target, itemsMap) {
     }
 
     this.$target = $target;
+
+    // add click listener on each palette item
     this.$target.on('click', '.decal-palette-item', function (e) {
         if (e.target && e.target.getAttribute('data-key')) {
             var decalId = e.target.getAttribute('data-key'),
                 decal = that.itemsMap.hasOwnProperty(decalId) ? that.itemsMap[decalId] : undefined;
 
+            // trigger palette item clicked with decal as parameter
             that.$target.trigger(Events.decalPaletteItemClicked, {
                 decal: decal
             });
@@ -624,6 +744,9 @@ var DecalPalette = function ($target, itemsMap) {
     });
 };
 DecalPalette.prototype = {
+    /**
+     * renders the palette
+     */
     render: function () {
         var frag = document.createDocumentFragment(),
             i,
@@ -662,6 +785,13 @@ DecalPalette.prototype = {
 };
 
 /*global jQuery, Events */
+
+/**
+ * Actionbar to allow
+ * @param $target
+ * @param givenCfg
+ * @constructor
+ */
 var DecalActionBar = function ($target, givenCfg) {
     var that = this,
         defaultCfg = {
@@ -671,7 +801,7 @@ var DecalActionBar = function ($target, givenCfg) {
         },
         cfg = jQuery.extend({}, defaultCfg, givenCfg);
 
-
+    // basic initializing
     this.className = 'decal-action-bar';
     this.hiddenclassName = 'action-bar-hidden';
     this.actionClassName = 'decal-action';
@@ -696,27 +826,40 @@ var DecalActionBar = function ($target, givenCfg) {
         cfg.holder.$target.parent().after(this.$target);
     }
 
-
+    // apply click handler
     this.$target.on('click', '.' + this.actionClassName, function (e) {
         if (e.target &&
             // check if target has key or parent
             (e.target.getAttribute('data-key') || e.target.parentNode.getAttribute('data-key'))) {
+
+            // get key and load action from action map
             var actionKey = e.target.getAttribute('data-key') || e.target.parentNode.getAttribute('data-key'),
                 action = that.actions.hasOwnProperty(actionKey) ? that.actions[actionKey] : undefined;
 
+            // trigger decalActionClicked with action object
             that.$target.trigger(Events.decalActionClicked, {
                 action: action
             });
         }
     });
 };
+
 DecalActionBar.prototype = {
+    /**
+     * hides the actionbar by adding the hiddenClassName class
+     */
     hide: function () {
         this.$target.addClass(this.hiddenclassName);
     },
+    /**
+     * shows the actionbar by removing the hiddenClassName class
+     */
     show: function () {
         this.$target.removeClass(this.hiddenclassName);
     },
+    /**
+     * renders the actionbar
+     */
     render: function () {
         var frag = document.createDocumentFragment(),
             el,
@@ -756,6 +899,14 @@ DecalActionBar.prototype = {
 };
 
 /*global require, Img */
+
+/**
+ * Function that wraps an target with a wrapper
+ * @param $target
+ * @param compImg
+ * @param noInteraction
+ * @constructor
+ */
 var DecalCanvasRenderer = function ($target, compImg, noInteraction) {
     if (!compImg instanceof Img) {
         throw 'need Img instance to render';
@@ -769,13 +920,15 @@ var DecalCanvasRenderer = function ($target, compImg, noInteraction) {
     this.place();
 };
 
+/**
+ * puts an image-composer-canvas after the initial image and hides the image
+ */
 DecalCanvasRenderer.prototype.place = function () {
     'use strict';
 
     this.$target.hide();
 
     var imgContainer = document.createElement('div');
-
     imgContainer.className = 'image-composer-canvas';
     imgContainer.appendChild(this.compImg.img);
 
@@ -785,9 +938,12 @@ DecalCanvasRenderer.prototype.place = function () {
 };
 
     this.each(function () {
+        // initialize DecalComposer on given element
         var $this = jQuery(this),
             imageDecals = new DecalComposer($this, settings);
-            $this.data('imageDecals', imageDecals);
+
+        // set imageDecals data with initialized DecalComposer
+        $this.data('imageDecals', imageDecals);
     });
 
     // returns the jQuery object to allow for chainability.

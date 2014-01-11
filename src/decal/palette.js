@@ -1,4 +1,11 @@
 /*global Decal, Events */
+
+/**
+ * Palette with all available decals
+ * @param $target
+ * @param itemsMap
+ * @constructor
+ */
 var DecalPalette = function ($target, itemsMap) {
     var that = this,
         item;
@@ -6,6 +13,7 @@ var DecalPalette = function ($target, itemsMap) {
     this.items = [];
     this.itemsMap = itemsMap;
 
+    // fill items array with newly created Decal objects based on each item
     for (item in this.itemsMap) {
         if (this.itemsMap.hasOwnProperty(item)) {
             this.items.push(new Decal(this.itemsMap[item]));
@@ -13,11 +21,14 @@ var DecalPalette = function ($target, itemsMap) {
     }
 
     this.$target = $target;
+
+    // add click listener on each palette item
     this.$target.on('click', '.decal-palette-item', function (e) {
         if (e.target && e.target.getAttribute('data-key')) {
             var decalId = e.target.getAttribute('data-key'),
                 decal = that.itemsMap.hasOwnProperty(decalId) ? that.itemsMap[decalId] : undefined;
 
+            // trigger palette item clicked with decal as parameter
             that.$target.trigger(Events.decalPaletteItemClicked, {
                 decal: decal
             });
@@ -25,6 +36,9 @@ var DecalPalette = function ($target, itemsMap) {
     });
 };
 DecalPalette.prototype = {
+    /**
+     * renders the palette
+     */
     render: function () {
         var frag = document.createDocumentFragment(),
             i,

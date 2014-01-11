@@ -1,4 +1,11 @@
 /*global jQuery, Events */
+
+/**
+ * Actionbar to allow
+ * @param $target
+ * @param givenCfg
+ * @constructor
+ */
 var DecalActionBar = function ($target, givenCfg) {
     var that = this,
         defaultCfg = {
@@ -8,7 +15,7 @@ var DecalActionBar = function ($target, givenCfg) {
         },
         cfg = jQuery.extend({}, defaultCfg, givenCfg);
 
-
+    // basic initializing
     this.className = 'decal-action-bar';
     this.hiddenclassName = 'action-bar-hidden';
     this.actionClassName = 'decal-action';
@@ -33,27 +40,40 @@ var DecalActionBar = function ($target, givenCfg) {
         cfg.holder.$target.parent().after(this.$target);
     }
 
-
+    // apply click handler
     this.$target.on('click', '.' + this.actionClassName, function (e) {
         if (e.target &&
             // check if target has key or parent
             (e.target.getAttribute('data-key') || e.target.parentNode.getAttribute('data-key'))) {
+
+            // get key and load action from action map
             var actionKey = e.target.getAttribute('data-key') || e.target.parentNode.getAttribute('data-key'),
                 action = that.actions.hasOwnProperty(actionKey) ? that.actions[actionKey] : undefined;
 
+            // trigger decalActionClicked with action object
             that.$target.trigger(Events.decalActionClicked, {
                 action: action
             });
         }
     });
 };
+
 DecalActionBar.prototype = {
+    /**
+     * hides the actionbar by adding the hiddenClassName class
+     */
     hide: function () {
         this.$target.addClass(this.hiddenclassName);
     },
+    /**
+     * shows the actionbar by removing the hiddenClassName class
+     */
     show: function () {
         this.$target.removeClass(this.hiddenclassName);
     },
+    /**
+     * renders the actionbar
+     */
     render: function () {
         var frag = document.createDocumentFragment(),
             el,

@@ -1,5 +1,10 @@
 /*global Img */
 
+/**
+ * Function to calculate dimension of an image
+ * @param {Boolean} useSrcDimension loads the image and uses the loaded ressource dimension
+ * @param {Function} done callback if it calculated the dimension
+ */
 Img.prototype.dimension = function (useSrcDimension, done) {
     'use strict';
 
@@ -9,7 +14,7 @@ Img.prototype.dimension = function (useSrcDimension, done) {
         doneIsFn = (Object.prototype.toString.call(done) === '[object Function]');
 
     if (useSrcDimension) {
-
+        // load dimension based on src
         imageLoaded = function () {
             // this represents the HTMLImageElement
             that.width = this.width;
@@ -30,7 +35,7 @@ Img.prototype.dimension = function (useSrcDimension, done) {
         this.img = img;
 
     } else {
-
+        // load dimension based on existing dom element
         this.width = this.$el.width();
         this.height = this.$el.height();
 
