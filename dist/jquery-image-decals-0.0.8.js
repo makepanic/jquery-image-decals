@@ -445,9 +445,9 @@ DecalHolder.prototype = {
             // upper boundary
             centerPoint.y < 0 ||
             // right boundary
-            centerPoint.x > this.cfg.dimension.height ||
+            centerPoint.x > this.cfg.dimension.width ||
             // lower boundary
-            centerPoint.y > this.cfg.dimension.width;
+            centerPoint.y > this.cfg.dimension.height;
 
         return isOutside;
     },
