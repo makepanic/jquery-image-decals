@@ -18,6 +18,7 @@ defaults:
 
 ```
 {
+    maxDecals: -1,
     showActions: false,
     actionBar: undefined,
     actions: [],
@@ -36,6 +37,10 @@ defaults:
     }
 }
 ```
+
+###maxDecals `Number`
+
+Number of maximum possible amount of decals. Use `-1` to disable this limit.
 
 ###showPalette `Boolean`
 

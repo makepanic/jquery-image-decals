@@ -81,7 +81,9 @@ DecalHolder.prototype = {
      * @private
      */
     _applyResizeable: function () {
-        var that = this,
+        var $needNoAspectRatioResizeable,
+            $needAspectRatioResizeable,
+            that = this,
             /**
              * Function that is called once the resize stopped. It updates the dimension of the resized decal.
              * @param e
@@ -109,82 +111,92 @@ DecalHolder.prototype = {
             });
         };
 
-        // apply resizable without aspectRatio
-        this.$target.find('.resizable-no-aspect-ratio').resizable({
-            containment: 'parent',
-            stop: stopFn
-        });
+        $needNoAspectRatioResizeable = this.$target.find('.resizable-no-aspect-ratio');
+        $needAspectRatioResizeable = this.$target.find('.resizable-aspect-ratio');
 
-        // apply resizable with aspectRatio
-        this.$target.find('.resizable-aspect-ratio').resizable({
-            containment: 'parent',
-            aspectRatio: true,
-            stop: stopFn
-        });
+        if ($needNoAspectRatioResizeable.length) {
+            // apply resizable without aspectRatio
+            $needNoAspectRatioResizeable.resizable({
+                containment: 'parent',
+                stop: stopFn
+            });
+        }
+
+        if ($needAspectRatioResizeable.length) {
+            // apply resizable with aspectRatio
+            $needAspectRatioResizeable.resizable({
+                containment: 'parent',
+                aspectRatio: true,
+                stop: stopFn
+            });
+        }
     },
     /**
      * Applies jqueryui draggable to all elements that have the draggable className
      * @private
      */
     _applyDraggable: function () {
-        var that = this;
+        var that = this,
+            $needDraggable = this.$target.find('.draggable');
 
-        this.$target.find('.draggable').draggable({
-            start: function(){
-                // add container drag class indicator
-                that.$target.addClass('decal-dragged');
-            },
-            drag: function(ev, ui){
-                // check if element is outside of holder bounds
-                if (that._itemOutsideHolder({
-                    left: ui.position.left,
-                    top: ui.position.top,
-                    width: ev.target.clientWidth,
-                    height: ev.target.clientHeight
-                })){
-                    // add indicator classname
-                    jQuery(ev.target).addClass('decal-out');
-                    that.$target.addClass('has-decal-out');
-                } else if (~ev.target.className.indexOf('decal-out')) {
-                    // is inside bounds, but has classname, remove
-                    jQuery(ev.target).removeClass('decal-out');
-                    that.$target.removeClass('has-decal-out');
-                }
-            },
-            stop: function (e, ui) {
-                // once drag is done, update decal positions
-                var uid = e.target.getAttribute('data-uid'),
-                    foundItem;
-
-                // remove container drag class indicator
-                that.$target.removeClass('decal-dragged');
-
-                that.itemsMap[uid].left = ui.position.left;
-                that.itemsMap[uid].top = ui.position.top;
-
-                that.items.every(function (item) {
-                    var found = false;
-
-                    if (item.uid === uid) {
-                        item.left = ui.position.left;
-                        item.top = ui.position.top;
-                        foundItem = item;
-                        found = true;
+        if ($needDraggable.length) {
+            $needDraggable.draggable({
+                start: function(){
+                    // add container drag class indicator
+                    that.$target.addClass('decal-dragged');
+                },
+                drag: function(ev, ui){
+                    // check if element is outside of holder bounds
+                    if (that._itemOutsideHolder({
+                        left: ui.position.left,
+                        top: ui.position.top,
+                        width: ev.target.clientWidth,
+                        height: ev.target.clientHeight
+                    })){
+                        // add indicator classname
+                        jQuery(ev.target).addClass('decal-out');
+                        that.$target.addClass('has-decal-out');
+                    } else if (~ev.target.className.indexOf('decal-out')) {
+                        // is inside bounds, but has classname, remove
+                        jQuery(ev.target).removeClass('decal-out');
+                        that.$target.removeClass('has-decal-out');
                     }
+                },
+                stop: function (e, ui) {
+                    // once drag is done, update decal positions
+                    var uid = e.target.getAttribute('data-uid'),
+                        foundItem;
 
-                    return !found;
-                });
+                    // remove container drag class indicator
+                    that.$target.removeClass('decal-dragged');
 
-                // check if element is outside canvas
-                if (foundItem) {
-                    if (that._itemOutsideHolder(foundItem)){
-                        that.removeDecal(foundItem);
+                    that.itemsMap[uid].left = ui.position.left;
+                    that.itemsMap[uid].top = ui.position.top;
+
+                    that.items.every(function (item) {
+                        var found = false;
+
+                        if (item.uid === uid) {
+                            item.left = ui.position.left;
+                            item.top = ui.position.top;
+                            foundItem = item;
+                            found = true;
+                        }
+
+                        return !found;
+                    });
+
+                    // check if element is outside canvas
+                    if (foundItem) {
+                        if (that._itemOutsideHolder(foundItem)){
+                            that.removeDecal(foundItem);
+                        }
+                    } else {
+                        throw 'y u no found item? uid=' + uid;
                     }
-                } else {
-                    console.error('y u no found item?', uid);
                 }
-            }
-        });
+            });
+        }
     },
     /**
      * Function that tests if the center of a decal is outside the container
@@ -280,11 +292,23 @@ DecalHolder.prototype = {
      * @param skipRender if true doesnt render from the added decal
      */
     addDecal: function (decal, skipRender) {
-        this.items.push(decal);
-        this.itemsMap[decal.uid] = decal;
+        var isUnlimited = this.cfg.maxDecals === -1;
+        // check if amount of items is greater than config maxDecals
+        if (isUnlimited ||
+            (this.items.length + 1 < this.cfg.maxDecals)) {
+            this.items.push(decal);
+            this.itemsMap[decal.uid] = decal;
 
-        if (!skipRender) {
-            this.renderOne(this.items.length - 1);
+            if (!skipRender) {
+                // if not skipped, render from added item
+                this.renderOne(this.items.length - 1);
+            }
+
+        } else if (!isUnlimited && this.cfg.maxDecals > -1){
+            // trigger event for too many decals
+            this.$target.trigger(Events.tooManyDecals, {
+                number: this.items.length
+            });
         }
     },
     /**

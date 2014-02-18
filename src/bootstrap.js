@@ -9,6 +9,7 @@ var _lastId = 0,
     };
 
 var Events = {
+    tooManyDecals: 'too-many-decals',
     decalItemFocusChanged: 'decal-item-focus-changed',
     decalPaletteItemClicked: 'decal-palette-item-clicked',
     decalActionClicked: 'decal-action-clicked',

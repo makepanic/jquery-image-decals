@@ -1,19 +1,16 @@
 {
   "name": "jquery-image-decals",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "private": true,
   "scripts": {
     "start": "node app.js"
-  },
-  "dependencies": {
-    "grunt": "~0.4.1",
-    "grunt-eslint": "~0.2.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-neuter": "~0.6.0",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-uglify": "~0.2.4",
-    "connect": "~2.9.2"
+    "connect": "~2.9.2",
+    "grunt-eslint": "~0.3.2"
   }
 }

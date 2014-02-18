@@ -20,6 +20,7 @@ var DecalComposer = function ($target, opts) {
     var that = this,
         noop = function () {},
         defaults = {
+            maxDecals: -1,
             actions: [],
             actionBar: undefined,
             showActions: false,
@@ -39,7 +40,8 @@ var DecalComposer = function ($target, opts) {
             decals: [],
             data: [],
             events: {
-                onDecalClicked: noop
+                onDecalClicked: noop,
+                onTooManyDecals: noop
             }
         };
 
@@ -98,6 +100,7 @@ DecalComposer.prototype = {
 
         // cerate DecalHolder
         this.decalHolder = new DecalHolder(elImgDecals, {
+            maxDecals: this.cfg.maxDecals,
             clickUnfocus: this.cfg.clickUnfocus,
             resizable: this.cfg.resizable,
             modifier: this.cfg.modifier,
@@ -130,6 +133,9 @@ DecalComposer.prototype = {
                 }
             }
         });
+
+        // tooManyDecals event handler
+        this.decalHolder.$target.on(Events.tooManyDecals, that.cfg.events.onTooManyDecals);
 
         if (this.cfg.showPalette) {
             // create palette container

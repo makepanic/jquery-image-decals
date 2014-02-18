@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <title>jquery-image-decals</title>
 
     <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
@@ -8,7 +9,7 @@
     <!-- jqueryui -->
     <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
-    <script type="text/javascript" src="dist/jquery-image-decals-0.0.8.js"></script>
+    <script type="text/javascript" src="dist/jquery-image-decals-0.0.9.js"></script>
 
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
     <style type="text/css">
@@ -145,6 +146,7 @@
     $(document).ready(function () {
 
         jQuery('.first').imageDecals({
+            maxDecals: 4,
             clickUnfocus: true,
             showActions: true,
             actions: decalActions,
@@ -165,6 +167,9 @@
             decals: decals,
             data: data,
             events: {
+                onTooManyDecals: function(ev, data){
+                    alert('too many decals (' + data.number + ')');
+                },
                 onDecalClicked: function (event, decal) {
                 }
             }
