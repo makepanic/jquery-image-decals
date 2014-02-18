@@ -1,4 +1,4 @@
-#jquery-image-decals
+#jquery-image-decals [![Build Status](https://travis-ci.org/makepanic/jquery-image-decals.png?branch=master)](https://travis-ci.org/makepanic/jquery-image-decals)
 
 ##demo
 
