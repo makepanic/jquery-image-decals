@@ -9,7 +9,7 @@
     <!-- jqueryui -->
     <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
-    <script type="text/javascript" src="dist/jquery-image-decals-0.0.9.js"></script>
+    <script type="text/javascript" src="dist/jquery-image-decals-0.0.10.js"></script>
 
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
     <style type="text/css">
@@ -58,7 +58,7 @@
         .decal-palette-item{
             display: inline-block;
             border: 1px solid #eee;
-            margin: 5px;;
+            margin: 5px;
         }
         .form{
             border: 2px solid red;
@@ -79,6 +79,12 @@
             opacity: .5 !important;
             background: red url('./img/cross.png') no-repeat center center !important;
             background-size: auto;
+        }
+        .decal-out img{
+            opacity: 0;
+        }
+        .ui-wrapper{
+            position: absolute !important;
         }
     </style>
 </head>
@@ -146,14 +152,14 @@
     $(document).ready(function () {
 
         jQuery('.first').imageDecals({
-            maxDecals: 4,
+            maxDecals: 10,
             clickUnfocus: true,
             showActions: true,
             actions: decalActions,
             actionTemplate: function (action) {
                 return '<i class="' + action.key + '"></i> ' + action.title;
             },
-
+            decalTagIsImg: true,
             useImageSrcDimension: false,
             resizable: true,
             showPalette: true,

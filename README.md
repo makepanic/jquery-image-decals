@@ -25,6 +25,7 @@ defaults:
     showPalette: false,
     clickable: false,
     draggable: false,
+    decalTagIsImg: false,
     scaleDecalDimension: false,
     domain: {
         width: 100,
@@ -57,6 +58,12 @@ Enable or disable drag'n'drop of a decal.
 ###scaleDecalDimension `Boolean`
 
 Set to `true` if you want to scale the width and height of the decals depending on the calculated scale.
+
+###decalTagIsImg `Boolean`
+
+Set to `true` if you want the decals to be displayed as `<img>`, not `<span>`.
+This can be useful if you want to print the page. Most browsers ignore `background-image` properties and only print
+`<img>` elements.
 
 ###domain `Object`
 

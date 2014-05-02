@@ -25,6 +25,7 @@ var DecalComposer = function ($target, opts) {
             actionBar: undefined,
             showActions: false,
             actionTemplate: undefined,
+            decalTagIsImg: false,
 
             useImageSrcDimension: true,
             clickUnfocus: false,
@@ -100,6 +101,7 @@ DecalComposer.prototype = {
 
         // cerate DecalHolder
         this.decalHolder = new DecalHolder(elImgDecals, {
+            decalTagIsImg: this.cfg.decalTagIsImg,
             maxDecals: this.cfg.maxDecals,
             clickUnfocus: this.cfg.clickUnfocus,
             resizable: this.cfg.resizable,
